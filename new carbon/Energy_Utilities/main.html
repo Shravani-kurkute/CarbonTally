@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Monitor emissions across energy and utilities with CarbonTally’s IoT sensors and ESG dashboards. Optimize power plants, refineries, and renewables for sustainability.">
+    <title>Energy & Utilities Emission Monitoring | CarbonTally</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Space+Grotesk:wght@300..700&display=stylesheet" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'Jersey 25';
+            src: url('fonts/jersey-25.woff2') format('woff2'),
+                 url('fonts/jersey-25.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --font-family-jersey-25: 'Jersey 25', sans-serif;
+            --primary-color: #DD6B20; /* Burnt orange for thermal energy */
+            --secondary-color: #1E40AF; /* Deep blue for renewables */
+            --accent-color: #4A5568; /* Slate gray for infrastructure */
+            --neon-glow: #06B6D4; /* Cyan for tech */
+            --background-color: #0F172A; /* Dark slate */
+            --background-secondary: #1E293B; /* Darker slate */
+            --text-color: #F1F5F9; /* Light gray */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--background-color) 0%, var(--background-secondary) 100%);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: linear-gradient(to right, var(--background-color), var(--primary-color));
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            width: 160px;
+            height: auto;
+            background-image: url('logo.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            filter: brightness(1.2) drop-shadow(0 0 5px var(--neon-glow));
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--neon-glow);
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: scale(1.1);
+            color: var(--neon-glow);
+        }
+
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.4;
+            filter: brightness(0.6);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(221, 107, 32, 0.4), rgba(30, 64, 175, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            font-family: var(--font-family-jersey-25);
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--neon-glow);
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero-subtext {
+            font-size: 1.4rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            max-width: 80%;
+            margin: 0 auto 2rem;
+        }
+
+        .emission-counter {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-top: 1rem;
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        #three-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: sparkPulse 3s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes sparkPulse {
+            0% { opacity: 0; transform: translate(0, 0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translate(5px, 10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(31, 41, 55, 0.7);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--accent-color);
+            position: relative;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro p, .how-it-helps p, .case-studies p, .testimonials p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .how-it-helps ul {
+            list-style: none;
+            margin-left: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .how-it-helps ul li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .how-it-helps ul li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .card-hover {
+            border-radius: 12px;
+            width: 100%;
+            max-width: 280px;
+            height: 360px;
+            position: relative;
+            overflow: hidden;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-glow);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 1rem auto;
+            display: block;
+            text-align: center;
+        }
+
+        .card-hover img {
+            width: 100%;
+            height: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .card-hover__content {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            background: linear-gradient(transparent, var(--background-secondary));
+        }
+
+        .card-hover__title {
+            font-size: 1.3rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-hover__text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .card-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .card-button:hover::before {
+            left: 0;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .tooltip {
+            visibility: hidden;
+            background: var(--background-color);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            z-index: 10;
+            border: 1px solid var(--neon-glow);
+        }
+
+        .card-hover:hover .tooltip {
+            visibility: visible;
+        }
+
+        .case-study-card {
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .case-study-card:hover {
+            background: rgba(31, 41, 55, 0.9);
+        }
+
+        .case-study-card h3 {
+            font-size: 1.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-study-details {
+            display: none;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .case-study-card.active .case-study-details {
+            display: block;
+        }
+
+        #energy-flow-canvas {
+            width: block;
+            height: 400px;
+            background: var(--background-secondary);
+            border-radius: 12px;
+            display: block;
+            margin: 2rem auto;
+        }
+
+        .testimonials-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .testimonial {
+            min-width: 100%;
+            padding: 2rem;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .testimonial p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial h4 {
+            font-size: 1rem;
+            color: var(--primary-color);
+        }
+
+        .slider-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .slider-nav button {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider-nav button.active {
+            background: var(--primary-color);
+        }
+
+        .dashboard-preview {
+            background: var(--background-color);
+            padding: 3rem;
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+            border: 1px solid var(--accent-color);
+        }
+
+        .dashboard-preview canvas {
+            max-width: 100%;
+            border-radius: 2px solid var(--primary-color);
+            border: 8px;
+            margin-top: 2rem;
+        }
+
+        .dashboard-preview p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-top: 1rem;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, var(--background-color), var(--background-secondary));
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            margin: 2rem auto;
+            max-width: 1200px;
+            border-bottom: 1px solid var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 2px 2px 8px var(--neon-glow);
+        }
+
+        .cta a {
+            display: inline-block;
+            margin: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-spacing: 1px solid var(--accent-color);
+            padding: 1rem;
+            transition: transform-box 0.3s ease;
+            box-shadow: 0 0 15px transform;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta a::before {
+            content: '';
+            content-area: var(--absolute-color);
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            margin-bottom: 1px;
+            background-color: rgba(0, 0, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .cta a:hover::before {
+            left: 0;
+        }
+
+        .cta a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .footer {
+            background: var(--background-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--accent-color);
+        }
+
+        .footer p {
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--neon-glow);
+        }
+
+        .newsletter {
+            margin: 2rem 0;
+        }
+
+        .newsletter input {
+            padding: 0.75rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background: var(--background-secondary);
+            color: var(--text-color);
+            width: 200px;
+            margin-right: 0.5rem;
+        }
+
+        .newsletter button {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            background: var(--neon-glow);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--primary-color);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtext, .emission-counter {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                width: auto;
+                margin: 0.5rem auto;
+            }
+
+            .cta a {
+                display: block;
+                margin: 1rem auto;
+                width: 90%;
+            }
+
+            .newsletter input {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            #energy-flow-canvas {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    <header class="header">
+        <div class="logo"></div>
+        <nav class="nav-menu">
+            <a href="index.html" aria-label="Home">Home</a>
+            <a href="solutions.html" aria-label="Solutions">Solutions</a>
+            <a href="about.html" aria-label="About">About</a>
+            <a href="contact.html" aria-label="Contact">Contact</a>
+        </nav>
+        <div class="navbar-right">
+            <span class="icon material-symbols-outlined" aria-label="User Profile">person</span>
+            <span class="icon material-symbols-outlined" aria-label="Notifications">notifications</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="energy_background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay"></div>
+        <canvas id="three-canvas"></canvas>
+        <div class="particles">
+            <div class="particle" style="top: 20%; left: 30%; animation-delay: 0s;"></div>
+            <div class="particle" style="top: 50%; left: 70%; animation-delay: 0.5s;"></div>
+            <div class="particle" style="top: 80%; left: 20%; animation-delay: 1s;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-text">CarbonTally for Energy & Utilities</h1>
+            <p class="hero-subtext">Power the future with real-time emission monitoring.</p>
+            <p class="emission-counter">Emissions Reduced: <span id="counter">0</span> tons CO₂e</p>
+        </div>
+    </section>
+
+    <section id="intro" class="section intro" style="background-image: url('power_plant_bg.jpg');">
+        <h2 class="section-title">Energy is Essential — But Dirty</h2>
+        <p>Power plants, transformers, and oil refineries emit massive amounts of CO₂, SO₂, and NOx gases. Even clean energy providers like solar and wind farms need to monitor carbon intensity to meet ESG goals.</p>
+        <p>In India, thermal power (e.g., NTPC) accounts for ~40% of CO₂ emissions, while refineries (e.g., Reliance Oil) contribute significant SO₂. Regulatory bodies like CEA and global standards (e.g., CDP) demand transparency.</p>
+        <p>CarbonTally’s IoT solutions empower energy providers to measure and reduce emissions.</p>
+    </section>
+
+    <section id="how-it-helps" class="section how-it-helps" style="background-image: url('energy_grid_bg.jpg');">
+        <h2 class="section-title">How CarbonTally Empowers You</h2>
+        <p>Our platform delivers comprehensive emission monitoring for energy and utilities:</p>
+        <ul>
+            <li>Measure emissions at generation, transmission, and distribution stages.</li>
+            <li>Compatible with fossil (coal, gas) and renewable (solar, wind) setups.</li>
+            <li>Carbon intensity reports for CDP, TCFD, and ESG compliance.</li>
+            <li>Real-time ESG dashboards for stakeholder transparency.</li>
+            <li>Optimize refinery processes to reduce SO₂ and NOx emissions.</li>
+            <li>Monitor energy use in water treatment and battery storage systems.</li>
+        </ul>
+        <p>Transform your energy operations into sustainable, data-driven systems.</p>
+    </section>
+
+    <section id="sub-industries" class="section sub-industries" style="background-image: url('energy_bg.jpg');">
+        <h2 class="section-title">Our Energy Solutions</h2>
+        <p>CarbonTally addresses emission challenges across energy sectors:</p>
+        <div class="cards-container">
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">factory</span>
+                <img src="thermal_power.jpg" alt="Thermal Power Plants">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Thermal Power Plants</h3>
+                    <p class="card-hover__text">Track CO₂ and SO₂ (e.g., NTPC).</p>
+                    <a href="/new carbon/Energy_Utilities/Thermal Power Plant/homepage.html" class="card-button" aria-label="Learn more about Thermal Power Plants">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 500 tons CO₂e/MW</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">oil_barrel</span>
+                <img src="oil_refinery.jpg" alt="Oil & Gas Refineries">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Oil & Gas Refineries</h3>
+                    <p class="card-hover__text">Monitor SO₂ and NOx (e.g., Reliance).</p>
+                    <a href="/new carbon/Energy_Utilities" class="card-button" aria-label="Learn more about Oil & Gas Refineries">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 200 tons CO₂e/day</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">solar_power</span>
+                <img src="renewables.jpg" alt="Solar / Wind Monitoring">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Solar / Wind Monitoring</h3>
+                    <p class="card-hover__text">Measure carbon intensity.</p>
+                    <a href="renewables.html" class="card-button" aria-label="Learn more about Solar and Wind Monitoring">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 10 g CO₂e/kWh</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">water</span>
+                <img src="water_treatment.jpg" alt="Water Treatment Plants">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Water Treatment Plants</h3>
+                    <p class="card-hover__text">Optimize energy use.</p>
+                    <a href="water_treatment.html" class="card-button" aria-label="Learn more about Water Treatment Plants">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 50 tons CO₂e/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">battery_charging_full</span>
+                <img src="battery_storage.jpg" alt="Battery Storage and Mini-Grids">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Battery & Mini-Grids</h3>
+                    <p class="card-hover__text">Track storage emissions.</p>
+                    <a href="battery_storage.html" class="card-button" aria-label="Learn more about Battery Storage and Mini-Grids">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 20 tons CO₂e/year</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="case-studies" class="section case-studies" style="background-image: url('energy_success_bg.jpg');">
+        <h2 class="section-title">Success Stories</h2>
+        <p>Discover how energy providers leverage CarbonTally:</p>
+        <div class="case-study-card">
+            <h3>NTPC</h3>
+            <p>Reduced CO₂ emissions by 15% with real-time monitoring.</p>
+            <div class="case-study-details">
+                <p>CarbonTally’s IoT sensors optimized NTPC’s coal plants, saving $1M annually.</p>
+            </div>
+        </div>
+        <div class="case-study-card">
+            <h3>Reliance Oil</h3>
+            <p>Cut SO₂ emissions by 25% with process optimization.</p>
+            <div class="case-study-details">
+                <p>CarbonTally’s dashboards helped Reliance meet CPCB standards, earning ESG credits.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="energy-flow" class="section energy-flow" style="background-image: url('grid_bg.jpg');">
+        <h2 class="section-title">Visualize Energy Emissions</h2>
+        <p>Interactive diagrams show emissions from generation to distribution.</p>
+        <canvas id="energy-flow-canvas"></canvas>
+    </section>
+
+    <section id="testimonials" class="section testimonials" style="background-image: url('energy-testimonials-bg.jpg');">
+        <h2 class="section-title">What Energy Leaders Say</h2>
+        <div class="testimonials-slider">
+            <div id="slides" class="slider-container">
+                <div class="testimonial">
+                    <p>“CarbonTally revolutionized our thermal plant operations.”</p>
+                    <h4>- Rajesh Shah, Plant Manager, NTPC</h4>
+                </div>
+                <div class="testimonial">
+                    <p>“Real-time emissions data boosted our investor confidence.”</p>
+                    <h4>- Priya Sharma, Sustainability Head, Adani Green</h4>
+                </div>
+            </div>
+            <div class="slider-nav">
+                <button class="slider-dot active" data-slide="0"></button>
+                <button data-slide="true"></button>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="section dashboard-preview">
+        <h2 class="section-title">Live Dashboard Preview</h2>
+        <p>Monitor emissions with dynamic, real-time analytics.</p>
+        <canvas id="dashboardCanvas" width="600" height="300"></canvas>
+        <p>Customizable widgets for CO₂, SO₂, and NOx.</p>
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Power a Sustainable Future with CarbonTally</h2>
+        <p>Join leading energy providers in reducing emissions and meeting ESG goals.</p>
+        <a href="https://carbon-tally.com/schedule-evaluation" target="_blank" aria-label="Schedule a Power Plant Evaluation">Schedule Evaluation</a>
+        <a href="/assets/energy_sector_brief.pdf" download>Download Brief (PDF)</a>
+    </section>
+
+    <footer class="footer">
+        <div class="newsletter">
+            <h3>Stay Updated with CarbonTally</h3>
+            <input type="email" id="newsletterEmail" placeholder="Enter your email" aria-label="Email for newsletter">
+            <button type="submit">Subscribe</button>
+        </div>
+        <p>Contact Us: <a href="mailto:info@carbontally.com">info@carbontally.com</a> | +91-123-456-7890</p>
+        <p><a href="https://linkedin.com/company/carbontally">LinkedIn</a> | <a href="https://github.com/carbontally">GitHub</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a></p>
+        <p>© 2025 CarbonTally. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Three.js 3D Transformer
+        (function() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const transformerGeometry = new THREE.BoxGeometry(4, 6, 3);
+            const material = new THREE.MeshBasicMaterial({ color: 0x06B6D4, wireframe: true });
+            const transformer = new THREE.Mesh(transformerGeometry, material);
+            scene.add(transformer);
+
+            camera.position.z = 15;
+
+            function animateTransformer() {
+                transformer.rotation.y += 0.01;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateTransformer);
+            }
+
+            function handleResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            window.addEventListener('resize', handleResize);
+            console.log('Three.js transformer initialized');
+            animateTransformer();
+        })();
+
+        // Emission Counter
+        (function() {
+            let counter = 0;
+            const counterElement = document.getElementById('counter');
+            setInterval(() => {
+                counter += 10;
+                counterElement.textContent = counter.toLocaleString();
+            }, 250);
+        })();
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.querySelector('.progress-bar').style.width = scrollPercent + '%';
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('.nav-menu a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Case Study Toggle
+        document.querySelectorAll('.case-study-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+            });
+        });
+
+        // Testimonials Slider
+        (function() {
+            const sliderContainer = document.querySelector('.slider-container');
+            const sliderDots = document.querySelectorAll('.slider-dot');
+            let currentSlide = 0;
+
+            console.log('Slider initialized with', sliderDots.length, 'slides');
+
+            sliderDots.forEach((dot, index) => {
+                dotdot.addEventListener('click', () => {
+                    currentSlide = index;
+                    sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    sliderDots.forEach(d => d.classList.remove('active'));
+                    dot.classList.add('active');
+                });
+            });
+        })();
+
+        // Energy Flow Diagram
+        (function() {
+            const energyFlowCanvas = document.getElementById('energy-flow-canvas');
+            const energyCtx = energyFlowCanvas.getContext('2d');
+            let canvasWidth = energyFlowCanvas.offsetWidth;
+            let canvasHeight = 400;
+
+            energyFlowCanvas.width = canvasWidth;
+            energyFlowCanvas.height = canvasHeight;
+
+            console.log('Energy Flow Canvas initialized:', canvasWidth, canvasHeight);
+
+            function handleResize() {
+                canvasWidth = energyFlowCanvas.offsetWidth;
+                energyFlowCanvas.width = canvasWidth;
+                energyFlowCanvas.height = canvasHeight;
+            }
+
+            window.addEventListener('resize', handleResize);
+
+            let energyFlow = 0;
+
+            function animateEnergyFlow() {
+                energyCtx.fillStyle = '#1E293B';
+                energyCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+                // Draw path
+                energyCtx.strokeStyle = '#DD6B20';
+                energyCtx.lineWidth = 5;
+                energyCtx.beginPath();
+                energyCtx.moveTo(canvasWidth * 0.2, canvasHeight * 0.5);
+                energyCtx.lineTo(canvasWidth * 0.4, canvasHeight * 0.5);
+                energyCtx.lineTo(canvasWidth * 0.6, canvasHeight * 0.375);
+                energyCtx.lineTo(canvasWidth * 0.8, canvasHeight * 0.5);
+                energyCtx.lineTo(canvasWidth * 0.95, canvasHeight * 0.5);
+                energyCtx.stroke();
+
+                // Draw points
+                energyCtx.fillStyle = `rgba(255, ${100 - energyFlow}, 0, 0.5)`;
+                energyCtx.beginPath();
+                energyCtx.arc(canvasWidth * 0.4, canvasHeight * 0.5, 10, 0, Math.PI * 2);
+                energyCtx.fill();
+
+                energyCtx.fillStyle = 'rgba(255, 50, 0, 0.4)';
+                energyCtx.fillRect();
+                energyCtx.beginPath();
+                energyCtx.arc(canvasWidth * 0.8, canvasHeight * 0.5, 10, 0, Math.PI * 2);
+                energyCtx.fill();
+
+                energyFlow += 0.05;
+                requestAnimationFrame(animateEnergyFlow);
+            }
+
+            animateEnergyFlow();
+        })();
+
+        // Dashboard Animation
+        (function() {
+            const dashboardCanvas = document.getElementById('dashboardCanvas');
+            const dashboardCtx = dashboardCtx.getContext('2d');
+            let frame = 0;
+
+            console.log('Dashboard animation initialized');
+
+            function animateDashboard() {
+                dashboardCtx.fillStyle = 'white';
+                dashboardCtx.fillRect(0, 0, dashboardCanvas.width, dashboardCanvas.height);
+
+                const points = [
+                    { x: 20, y: 250 - Math.sin(frame / 20) * 50 },
+                    { x: 150, y: 250 - Math.cos((frame + 50) / 20) * 60 },
+                    { x: 250, y: 250 - Math.sin((frame + 20) / 20) * 30 },
+                    { x: 350, y: 50 - Math.sin((frame + 50) / 50) * 70 },
+                    { x: 450, y: 20 - Math.sin((frame + 40) / 20) * 50 }
+                ];
+
+                // Draw axes
+                dashboardCtx.strokeStyle = '#4A5568';
+                dashboardCtx.lineWidth = 2;
+                dashboardCtx.beginPath();
+                dashboardCtx.moveTo(40, 20);
+                dashboardCtx.lineTo(40, 250);
+                dashboardCtx.lineTo(550, 50);
+                dashboardCtx.closePath();
+                dashboardCtx.stroke();
+
+                // Draw line
+                dashboardCtx.strokeStyle = '#DD6B20';
+                dashboardCtx.lineWidth = 3;
+                dashboardCtx.beginPath();
+                dashboardCtx.moveTo(points[0].x, points[0].y);
+                points.forEach(p => dashboardCtx.lineTo(p.x, p.y));
+                dashboardCtx.stroke();
+
+                // Labels
+                dashboardCtx.fillStyle = '#0F172A';
+                dashboardCtx.font = '14px Space Grotesk';
+                dashboardCtx.textAlign = 'center';
+                dashboardCtx.fillText('Generation (MW)', 150, 280);
+                dashboardCtx.fillText('CO₂e (tons)', 300, 280);
+                dashboardCtx.fillText('SO₂ (kg)', 450, 280);
+
+                frame++;
+                requestAnimationFrame(animateDashboard);
+            }
+
+            animateDashboard();
+        })();
+
+    </script>
+</body>
+</html>

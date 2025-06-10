@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Credits Dashboard</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1c1e26;
+            color: #fff;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #252a34;
+            padding: 20px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            color: #b3b3b3;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
+            color: #fff;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: #2c2f38;
+        }
+
+        .header h1 {
+            font-size: 32px;
+        }
+
+        .calculator,
+        .wallets,
+        .instructions {
+            margin-top: 40px;
+        }
+
+        .calculator label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .calculator select,
+        .calculator input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #21d07a;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #18a964;
+        }
+
+        .wallets {
+            display: flex;
+            gap: 20px;
+        }
+
+        .wallet {
+            background-color: #383c47;
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+            font-size: 50px;
+            margin-top: 10px;
+        }
+
+        .instructions,
+        .key-points {
+            margin-top: 40px;
+            background-color: #383c47;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .key-points ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .key-points ul li {
+            margin-bottom: 10px;
+        }
+
+        .key-points h2 {
+            color: #fff;
+        }
+
+        .key-points p {
+            color: #b3b3b3;
+        }
+
+        .image img {
+            width: 80vw;
+            max-width: 100%;
+        }
+
+        #calculationResult {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #383c47;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ffffff; 
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            color: #000;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .back-button:hover {
+            background-color: #d1d0d0; /* Slightly darker shade for hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adding hover effect */
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .wallets {
+                flex-direction: column;
+            }
+
+            .wallet {
+                margin-bottom: 20px;
+            }
+
+            .image img {
+                width: 100%;
+            }
+
+            .button-group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="carbonCredit.html">Dashboard</a></li>
+            <li><a href="transaction.html">Transactions</a></li>
+            <li><a href="#">Market Data</a></li>
+            <li><a href="#">Carbon Footprint Analysis</a></li>
+            <li><a href="FrontPage.html">Back to Home Page</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="image">
+            <img src="carbonCredit.png" alt="Carbon Credit">
+        </div>
+        <div class="header">
+            <h1>Carbon Credits</h1>
+            <p>Calculate your carbon credits based on your activities.</p>
+        </div>
+
+        <div class="calculator">
+            <label for="activity">Activity</label>
+            <select id="activity">
+                <option value="reforestation">Reforestation</option>
+                <option value="Renewable Energy">Renewable Energy</option>
+                <option value="Energy Efficiency">Energy Efficiency</option>
+            </select>
+
+            <label for="amount">Amount (in tons)</label>
+            <input type="number" id="amount" placeholder="Enter amount">
+
+            <div class="button-group">
+                <button onclick="calculate()">Calculate</button>
+                <button onclick="openDataVisualization()">Data Visualization</button>
+            </div>
+            <div id="calculationResult"></div>
+        </div>
+        <div class="wallets">
+            <h2>Wallets</h2>
+            <div class="wallet">
+                <h3>Wallet 1</h3>
+                <span class="material-symbols-outlined">
+                    account_balance_wallet
+                </span>
+            </div>
+            <div class="wallet">
+                <h3>Wallet 2</h3>
+                <span class="material-symbols-outlined">
+                    account_balance_wallet
+                </span>
+            </div>
+            <div class="wallet">
+                <h3>Wallet 3</h3>
+                <span class="material-symbols-outlined">
+                    account_balance_wallet
+                </span>
+            </div>
+        </div>
+
+        <div class="key-points">
+            <h2>Key Points About Carbon Credits:</h2>
+            <ul>
+                <li><strong>Purpose:</strong> Used to offset carbon emissions by supporting projects that reduce or
+                    remove an equivalent amount of GHGs.</li>
+                <li><strong>1 Credit = 1 Ton:</strong> One carbon credit represents the reduction or removal of one
+                    metric ton of CO<sub>2</sub> or its equivalent in other GHGs (CO<sub>2</sub>e).</li>
+                <li><strong>Compliance and Voluntary Markets:</strong></li>
+                <ul>
+                    <li><strong>Compliance Markets:</strong> Governed by regulations, companies must comply with
+                        emission caps set by regulatory bodies (e.g., EU ETS).</li>
+                    <li><strong>Voluntary Markets:</strong> Companies and individuals voluntarily purchase carbon
+                        credits to offset emissions for CSR goals or personal values.</li>
+                </ul>
+                <li><strong>Cap-and-Trade System:</strong> Governments set a cap on total emissions allowed, and
+                    companies can buy or sell carbon credits based on their emissions.</li>
+                <li><strong>Projects Generating Carbon Credits:</strong> Projects like renewable energy, reforestation,
+                    and methane capture are certified to generate carbon credits.</li>
+                <li><strong>Certification and Verification:</strong> Carbon credits are certified by third-party
+                    organizations to ensure emission reductions are real, measurable, additional, and permanent.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const activity = document.getElementById('activity').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const resultDiv = document.getElementById('calculationResult');
+
+            if (amount > 0) {
+                let carbonCredits = 0;
+
+                // Define the conversion factors for each activity
+                switch (activity) {
+                    case 'reforestation':
+                        carbonCredits = amount * 1.2;
+                        break;
+                    case 'Renewable Energy':
+                        carbonCredits = amount * 2.0;
+                        break;
+                    case 'Energy Efficiency':
+                        carbonCredits = amount * 1.5;
+                        break;
+                    default:
+                        resultDiv.textContent = 'Please select a valid activity.';
+                        resultDiv.style.display = 'block';
+                        return;
+                }
+
+                // Display the calculated carbon credits
+                resultDiv.textContent = `For ${activity}, you have earned ${carbonCredits.toFixed(2)} carbon credits for ${amount} tons.`;
+                resultDiv.style.display = 'block';
+            } else {
+                resultDiv.textContent = 'Please enter a valid amount.';
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        function openDataVisualization() {
+            // Open the page in the same tab for data visualization
+            window.location.href = 'credit-visualization.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Device Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: url('iot_device_manager.jpg') no-repeat center center fixed;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-green {
+            background-color: #22c55e;
+            color: white;
+        }
+
+        .btn-green:hover {
+            background-color: #16a34a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .device-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .device-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .device-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+
+        .status-online {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-offline {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .device-details {
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .device-details p {
+            margin-bottom: 0.5rem;
+        }
+
+        .latest-reading {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #f9fafb;
+            border-radius: 0.375rem;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-width: 28rem;
+            width: 90%;
+        }
+
+        .form-field {
+            margin-bottom: 1rem;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-field input,
+        .form-field select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #22c55e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #ef4444;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>IoT Device Integration</h1>
+            <div class="filters">
+                <div class="filter-group">
+                    <select id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="online">Online</option>
+                        <option value="offline">Offline</option>
+                    </select>
+                    <select id="typeFilter">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+                <button id="addDeviceBtn" class="btn btn-green">Add New Device</button>
+            </div>
+        </div>
+
+        <div id="statistics" class="stats-grid">
+            <!-- Statistics cards will be inserted here -->
+        </div>
+
+        <div id="devicesGrid" class="devices-grid">
+            <!-- Device cards will be inserted here -->
+        </div>
+
+        <div id="loading" class="loading" style="display: none">
+            <div class="spinner"></div>
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none">
+            <p>No IoT devices found</p>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem;">Add New IoT Device</h2>
+            <form id="deviceForm">
+                <div class="form-field">
+                    <label>Device Name</label>
+                    <input type="text" name="device_name" required>
+                </div>
+                <div class="form-field">
+                    <label>Device Type</label>
+                    <select name="device_type" required>
+                        <option value="">Select Type</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label>Location</label>
+                    <input type="text" name="location" required>
+                </div>
+                <div class="form-field">
+                    <label>Installation Date</label>
+                    <input type="date" name="installation_date" required>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-green" id="submitBtn">Add Device</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="errorToast" class="error-toast"></div>
+
+    <script>
+        const deviceTypes = [
+            "Temperature Sensor",
+            "Humidity Sensor",
+            "CO2 Sensor",
+            "Energy Meter",
+            "Smart Thermostat",
+            "Air Quality Monitor"
+        ];
+
+        // Initialize device type options
+        const typeFilter = document.getElementById('typeFilter');
+        const deviceTypeSelect = document.querySelector('select[name="device_type"]');
+        deviceTypes.forEach(type => {
+            typeFilter.add(new Option(type, type));
+            deviceTypeSelect.add(new Option(type, type));
+        });
+
+        // Initialize form date
+        document.querySelector('input[name="installation_date"]').value = 
+            new Date().toISOString().split('T')[0];
+
+        const filters = {
+            status: "",
+            device_type: "",
+            location: ""
+        };
+
+        // Event Listeners
+        document.getElementById('addDeviceBtn').addEventListener('click', () => {
+            document.getElementById('modal').style.display = 'flex';
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            document.getElementById('modal').style.display = 'none';
+        });
+
+        document.getElementById('statusFilter').addEventListener('change', (e) => {
+            filters.status = e.target.value;
+            fetchData();
+        });
+
+        document.getElementById('typeFilter').addEventListener('change', (e) => {
+            filters.device_type = e.target.value;
+            fetchData();
+        });
+
+        document.getElementById('deviceForm').addEventListener('submit', handleSubmit);
+
+        async function fetchData() {
+            const loading = document.getElementById('loading');
+            const emptyState = document.getElementById('emptyState');
+            loading.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/iot/devices/list', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                });
+
+                const result = await response.json();
+                if (result.error) throw new Error(result.error);
+
+                updateStatistics(result.data.statistics);
+                updateDevices(result.data.devices);
+                
+                loading.style.display = 'none';
+                emptyState.style.display = result.data.devices.length === 0 ? 'block' : 'none';
+            } catch (err) {
+                showError(err.message);
+                loading.style.display = 'none';
+            }
+        }
+
+        function updateStatistics(statistics) {
+            const statsContainer = document.getElementById('statistics');
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <h3>Total Devices</h3>
+                    <p>${statistics.total_devices}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Online Devices</h3>
+                    <p style="color: #22c55e">${statistics.online_devices}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Offline Devices</h3>
+                    <p style="color: #ef4444">${statistics.offline_devices}</p>
+                </div>
+            `;
+        }
+
+        function updateDevices(devices) {
+            const grid = document.getElementById('devicesGrid');
+            grid.innerHTML = devices.map(device => `
+                <div class="device-card">
+                    <div class="device-header">
+                        <div class="device-info">
+                            <h3>${device.device_name}</h3>
+                            <p>${device.device_type}</p>
+                        </div>
+                        <span class="status-badge ${device.status === 'online' ? 'status-online' : 'status-offline'}">
+                            ${device.status}
+                        </span>
+                    </div>
+                    <div class="device-details">
+                        <p><span style="color: #6b7280">Location:</span> ${device.location}</p>
+                        <p><span style="color: #6b7280">Installed:</span> ${new Date(device.installation_date).toLocaleDateString()}</p>
+                        ${device.latest_reading ? `
+                            <div class="latest-reading">
+                                <p style="font-weight: 600">Latest Reading</p>
+                                <p>${device.latest_reading.reading_value} ${device.latest_reading.unit}
+                                    <span style="color: #6b7280; margin-left: 0.5rem">
+                                        (${new Date(device.latest_reading.timestamp).toLocaleTimeString()})
+                                    </span>
+                                </p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adding...';
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/iot/devices/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...data,
+                        metadata: {}
+                    })
+                });
+
+                const result = await response.json();
+                if (result.error) throw new Error(result.error);
+
+                document.getElementById('modal').style.display = 'none';
+                e.target.reset();
+                document.querySelector('input[name="installation_date"]').value = 
+                    new Date().toISOString().split('T')[0];
+                fetchData();
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Device';
+            }
+        }
+
+        function showError(message) {
+            const toast = document.getElementById('errorToast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.

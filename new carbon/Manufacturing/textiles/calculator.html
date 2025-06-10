@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textile & Apparel Emissions Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+        }
+        .section-header h2 {
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .section-header span {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapsible-content.open {
+            max-height: 1000px;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .error {
+            border-color: #ef4444;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        .export-btn {
+            background-color: #16a34a;
+            margin-top: 1rem;
+        }
+        .export-btn:hover {
+            background-color: #15803d;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .chart-grid .full-width {
+            grid-column: 1 / -1;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .summary {
+            background: #f0f4f8;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        .suggestions ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            line-height: 1.5;
+        }
+        .suggestions li {
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Textile & Apparel Manufacturing Emissions Dashboard</h1>
+
+        <!-- Input Form -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('inputSection')">
+                <h2>Input Parameters</h2>
+                <span>▼</span>
+            </div>
+            <div id="inputSection" class="collapsible-content open">
+                <div class="input-grid">
+                    <div class="form-group">
+                        <label for="boilerRuntime">Steam Boiler Runtime (hours):</label>
+                        <input type="number" id="boilerRuntime" step="0.1" min="0" max="24" oninput="validateInput(this)">
+                        <p id="boilerRuntimeError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="dyeingMachines">Number of Dyeing Machines:</label>
+                        <input type="number" id="dyeingMachines" step="1" min="0" oninput="validateInput(this)">
+                        <p id="dyeingMachinesError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="electricity">Electricity Consumed (kWh):</label>
+                        <input type="number" id="electricity" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="electricityError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="fabric">Fabric Processed (kg):</label>
+                        <input type="number" id="fabric" step="0.1" min="1" oninput="validateInput(this)">
+                        <p id="fabricError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="transportVehicles">Transport Vehicles Used Weekly:</label>
+                        <input type="number" id="transportVehicles" step="1" min="0" oninput="validateInput(this)">
+                        <p id="transportVehiclesError" class="error-message"></p>
+                    </div>
+                </div>
+                <button onclick="calculateEmissions()">Calculate Emissions</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('resultsSection')">
+                <h2>Results & Visualizations</h2>
+                <span>▼</span>
+            </div>
+            <div id="resultsSection" class="collapsible-content open">
+                <div id="summary" class="summary"></div>
+                <button onclick="exportData()" class="export-btn">Export Data (CSV)</button>
+                <div class="chart-grid">
+                    <div>
+                        <canvas id="scopePie"></canvas>
+                    </div>
+                    <div class="full-width">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                    <div class="full-width">
+                        <canvas id="dyeingSpikes"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reduction Suggestions -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('suggestionsSection')">
+                <h2>Emission Reduction Suggestions</h2>
+                <span>▼</span>
+            </div>
+            <div id="suggestionsSection" class="collapsible-content open">
+                <div class="suggestions">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937;">Strategies to Reduce Emissions</h3>
+                    <ul>
+                        <li><strong>Optimize Boiler Runtime</strong>: Use high-efficiency boilers, switch to biomass or electric boilers, and optimize runtime schedules to reduce Scope 1 emissions.</li>
+                        <li><strong>Low-Impact Dyes</strong>: Use eco-friendly, low-VOC dyes and implement dye recovery systems to minimize VOC emissions from dyeing processes.</li>
+                        <li><strong>Renewable Energy</strong>: Source electricity from renewable providers or install on-site solar panels to lower Scope 2 emissions from looms and motors.</li>
+                        <li><strong>Efficient Transport</strong>: Consolidate transport routes, use fuel-efficient or electric vehicles, and optimize logistics to reduce Scope 3 emissions.</li>
+                        <li><strong>Fabric Processing Efficiency</strong>: Implement waterless dyeing technologies and recycle fabric scraps to reduce emissions per kg of fabric processed.</li>
+                        <li><strong>Process Optimization</strong>: Conduct energy audits, use energy-efficient motors, and adopt lean manufacturing to minimize overall resource use.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Emission factors (assumed values, replace with regional data)
+        const EMISSION_FACTORS = {
+            boiler: 2.5,       // kg CO2e/hour (fuel-based boiler)
+            dyeing_voc: 1.2,   // kg VOC/machine/day
+            electricity: 0.5,  // kg CO2e/kWh
+            transport: 150,    // kg CO2e/vehicle/week
+            fabric: 0.1        // kg CO2e/kg (processing overhead)
+        };
+
+        // Load or initialize trend data
+        let trendData = JSON.parse(localStorage.getItem('textileTrendData')) || [];
+        const MAX_DAYS = 7;
+
+        function validateInput(input) {
+            const errorElement = document.getElementById(`${input.id}Error`);
+            const value = parseFloat(input.value);
+            if (isNaN(value) || value < input.min || (input.max && value > input.max)) {
+                input.classList.add('error');
+                errorElement.textContent = `Value must be between ${input.min} and ${input.max || 'infinity'}`;
+                errorElement.classList.add('show');
+            } else {
+                input.classList.remove('error');
+                errorElement.classList.remove('show');
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('open');
+            section.previousElementSibling.querySelector('span').textContent = section.classList.contains('open') ? '▼' : '▶';
+        }
+
+        function calculateEmissions() {
+            // Validate inputs
+            const inputs = ['boilerRuntime', 'dyeingMachines', 'electricity', 'fabric', 'transportVehicles'];
+            let valid = true;
+            inputs.forEach(id => {
+                const input = document.getElementById(id);
+                const value = parseFloat(input.value);
+                if (isNaN(value) || value < input.min || (input.max && value > input.max)) {
+                    valid = false;
+                    validateInput(input);
+                }
+            });
+            if (!valid) {
+                alert('Please correct invalid inputs before calculating.');
+                return;
+            }
+
+            // Get input values
+            const boilerRuntime = parseFloat(document.getElementById('boilerRuntime').value) || 0;
+            const dyeingMachines = parseInt(document.getElementById('dyeingMachines').value) || 0;
+            const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+            const fabric = parseFloat(document.getElementById('fabric').value) || 1;
+            const transportVehicles = parseInt(document.getElementById('transportVehicles').value) || 0;
+
+            // Calculate emissions
+            const boilerEmis = boilerRuntime * EMISSION_FACTORS.boiler;
+            const dyeingEmis = dyeingMachines * EMISSION_FACTORS.dyeing_voc;
+            const scope1 = boilerEmis + dyeingEmis;
+
+            const scope2 = electricity * EMISSION_FACTORS.electricity;
+
+            const transportEmis = transportVehicles * EMISSION_FACTORS.transport;
+            const fabricEmis = fabric * EMISSION_FACTORS.fabric;
+            const scope3 = transportEmis + fabricEmis;
+
+            const total = scope1 + scope2 + scope3;
+            const perFabric = fabric > 0 ? (total / fabric).toFixed(2) : 0;
+
+            // Update summary
+            document.getElementById('summary').innerHTML = `
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937;">Total Emissions: ${total.toFixed(2)} kg CO₂e</h3>
+                <p style="color: #4b5563;">Emission per kg of Fabric: <strong>${perFabric} kg CO₂e</strong></p>
+                <div style="background: #e5e7eb; padding: 1rem; border-radius: 4px; margin-top: 0.5rem;">
+                    <strong>Scope 1</strong>: ${scope1.toFixed(2)} kg CO₂e (Boiler Fuel, Dyeing VOCs)<br>
+                    <strong>Scope 2</strong>: ${scope2.toFixed(2)} kg CO₂e (Electricity)<br>
+                    <strong>Scope 3</strong>: ${scope3.toFixed(2)} kg CO₂e (Transport, Fabric Processing)
+                </div>
+            `;
+
+            // Store trend data
+            const today = new Date().toISOString().split('T')[0];
+            const dayOfWeek = new Date().getDay();
+            const isDyeingSpike = [1, 3, 5].includes(dayOfWeek); // Assume spikes on Mon, Wed, Fri
+            const dyeingSpikeFactor = isDyeingSpike ? 1.5 : 1.0; // 50% higher emissions on spike days
+            trendData.push({
+                date: today,
+                boiler: boilerEmis,
+                dyeing: dyeingEmis * dyeingSpikeFactor,
+                electricity: scope2,
+                transport: transportEmis,
+                fabric: fabricEmis,
+                scope1: scope1 * dyeingSpikeFactor,
+                scope2: scope2,
+                scope3: scope3,
+                total: (scope1 * dyeingSpikeFactor) + scope2 + scope3
+            });
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - MAX_DAYS);
+            trendData = trendData.filter(d => new Date(d.date) >= cutoffDate);
+            localStorage.setItem('textileTrendData', JSON.stringify(trendData));
+
+            // Aggregate trend data
+            const dates = [...new Set(trendData.map(d => d.date))].sort();
+            const boilerTrend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.boiler, 0));
+            const totalTrend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.total, 0));
+            const dyeingTrend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.dyeing, 0));
+            const scope1Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope1, 0));
+            const scope2Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope2, 0));
+            const scope3Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope3, 0));
+
+            // Destroy existing charts if they exist
+            if (window.pie && typeof window.pie.destroy === 'function') window.pie.destroy();
+            if (window.line && typeof window.line.destroy === 'function') window.line.destroy();
+            if (window.dyeing && typeof window.dyeing.destroy === 'function') window.dyeing.destroy();
+
+            // Pie chart
+            window.pie = new Chart(document.getElementById('scopePie'), {
+                type: 'pie',
+                data: {
+                    labels: ['Scope 1', 'Scope 2', 'Scope 3'],
+                    datasets: [{
+                        data: [scope1 * dyeingSpikeFactor, scope2, scope3],
+                        backgroundColor: ['#ef4444', '#3b82f6', '#10b981']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Emission Share by Scope', font: { size: 16 } },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+
+            // Line chart (Boiler runtime vs Emissions)
+            window.line = new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: dates.length ? dates : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Boiler Emissions (kg CO₂e)',
+                            data: boilerTrend.length ? boilerTrend : [boilerEmis * 0.8, boilerEmis, boilerEmis * 1.1, boilerEmis, boilerEmis * 1.2, boilerEmis, boilerEmis * 0.9],
+                            borderColor: '#f59e0b',
+                            yAxisID: 'y-boiler',
+                            fill: false
+                        },
+                        {
+                            label: 'Total Emissions (kg CO₂e)',
+                            data: totalTrend.length ? totalTrend : [total * 0.8, total, total * 1.1, total, total * 1.2, total, total * 0.9],
+                            borderColor: '#10b981',
+                            yAxisID: 'y-total',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Boiler Runtime vs Total Emissions', font: { size: 16 } }
+                    },
+                    scales: {
+                        'y-boiler': { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Boiler Emissions (kg CO₂e)' } },
+                        'y-total': { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Total Emissions (kg CO₂e)' }, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // Dyeing process emission spikes
+            window.dyeing = new Chart(document.getElementById('dyeingSpikes'), {
+                type: 'bar',
+                data: {
+                    labels: dates.length ? dates : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Dyeing Emissions (kg CO₂e)',
+                        data: dyeingTrend.length ? dyeingTrend : [dyeingEmis * 1.5, dyeingEmis, dyeingEmis * 1.5, dyeingEmis, dyeingEmis * 1.5, dyeingEmis, dyeingEmis],
+                        backgroundColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Weekly Dyeing Process Emission Spikes', font: { size: 16 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'kg CO₂e' } }
+                    }
+                }
+            });
+        }
+
+        function exportData() {
+            const csvContent = [
+                ['Date', 'Boiler (kg)', 'Dyeing (kg)', 'Electricity (kg)', 'Transport (kg)', 'Fabric (kg)', 'Scope 1 (kg)', 'Scope 2 (kg)', 'Scope 3 (kg)', 'Total (kg)'],
+                ...trendData.map(d => [
+                    d.date,
+                    d.boiler.toFixed(2),
+                    d.dyeing.toFixed(2),
+                    d.electricity.toFixed(2),
+                    d.transport.toFixed(2),
+                    d.fabric.toFixed(2),
+                    d.scope1.toFixed(2),
+                    d.scope2.toFixed(2),
+                    d.scope3.toFixed(2),
+                    d.total.toFixed(2)
+                ])
+            ].map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `textile_emissions_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<html>
+ <head>
+  <title> ESG and Carbon Footprints </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+   body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+    .header {
+        padding: 20px;
+        text-align: right;
+        position: relative;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        z-index: 100; /* Ensure header stays above other content */
+    }
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        margin-left: 15px; /* Added some spacing between the buttons */
+    }
+    .dropbtn {
+        background: linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0);
+        border: none;
+        font-weight: bold;
+        padding: 15px 25px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 30px;
+        color: white;
+        transition: 0.4s;
+        animation: neon-pulse 1.5s infinite alternate;
+    }
+    @keyframes neon-pulse {
+        0% { box-shadow: 0 0 5px #ff0080; }
+        100% { box-shadow: 0 0 20px #40e0d0; }
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        min-width: 200px;
+        border-radius: 10px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.4s ease-in-out;
+        z-index: 99; /* Ensure dropdown is above other content */
+
+    }
+    .dropdown-content a {
+        display: block;
+        text-decoration: none;
+        color: black;
+        padding: 15px;
+        text-align: left;
+        font-size: 16px;
+        font-weight: bold;
+        transition: 0.3s;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .dropdown-content a:last-child {
+        border-bottom: none;
+    }
+    .dropdown-content a:hover {
+        background: linear-gradient(45deg, #ff8c00, #ff0080);
+        padding-left: 30px;
+        color: white;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+        transform: scaleY(1);
+    }
+    .main-title {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .content img {
+       width: 5000px;
+        height: 500px;
+        border-radius: 40px;
+    }
+    .content .text {
+        margin-left: 20px;
+    }
+    .content .text h2 {
+        color: #1a3e9a;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .content .text p {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+    .content .text button {
+        background-color: #1a3e9a;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    @media (max-width: 768px) {
+        .content {
+            flex-direction: column;
+            text-align: center;
+        }
+        .content .text {
+            margin-left: 0;
+            margin-top: 20px;
+        }
+    }
+    
+    .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 20px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .container .text {
+            flex: 1;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 20px;
+        }
+        .image {
+            flex: 1;
+        }
+        .image img {
+            max-width: 500px;
+            height: auto;
+            border-radius: 40px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .text {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
+
+        .container2 {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+        }
+        .image2 {
+            flex: 1;
+            padding-right: 20px;
+            margin-left: 40px;
+        }
+        .text2 {
+            flex: 1;
+            font-size: 26px;
+            color: #000000;
+        }
+        .text p {
+            margin: 0;
+            line-height: 1.5;
+        }
+        @media (max-width: 768px) {
+            .container2 {
+                flex-direction: column;
+                text-align: center;
+            }
+            .image2 {
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+        }
+        .button-73 {
+    appearance: none;
+    background-color: #FFFFFF;
+    border-radius: 40em;
+    border-style: none;
+    box-shadow: #ADCFFF 0 -12px 6px inset;
+    box-sizing: border-box;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -.24px;
+    margin: 0;
+    outline: none;
+    padding: 1rem 1.3rem;
+    quotes: auto;
+    text-align: center;
+    text-decoration: none;
+    transition: all .15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    z-index: 101; /* Give it a higher z-index */
+  }
+  
+  .button-73:hover {
+    background-color: #FFC229;
+    box-shadow: #FF6314 0 -6px 8px inset;
+    transform: scale(1.05);
+  }
+  
+  .button-73:active {
+    transform: scale(1.025);
+  }
+  
+  @media (min-width: 768px) {
+    .button-73 {
+      font-size: 1.5rem;
+      padding: .75rem 2rem;
+    }
+  }
+
+  .hidden {
+    opacity: 0;
+  }
+
+  </style>
+ </head>
+ <body>
+  <div class="header">
+      <button class="button-73" role="button" ><a href="homepage.html">Back</a></button>◘
+  <button class="button-73" role="button" ><a href="comparative.html">Go To DashBoard</a></button>
+
+
+    <div class="dropdown">
+      <button class="dropbtn">🔥 Emission Scopes ▼</button>
+      <div class="dropdown-content">
+        <a href="scope1.html">🌍 Scope 1</a>
+        <a href="scope2.html">💡 Scope 2</a>
+        <a href="scope3.html">🚛 Scope 3</a>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="main-title hidden">
+   ESG and Carbon Footprints
+  </div>
+  <div class="content hidden">
+   <!-- <img alt="Illustration of a TV screen with wind turbines and the text 'What is Net Zero?'" src=""/> -->
+   <video autoplay loop muted playsinline class="hero-video">
+    <source src="What is net-zero_  Kristen Bell  Giant Ant - Copy.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+   <div class="text">
+    <h2>
+     Why is net zero important?
+    </h2>
+    <p>
+     Net zero is important as it’s the best way we can tackle climate change by reducing global warming. What we do in the next decade to limit emissions will be critical to the future, which is why every country, sector, industry and each one of us must work together to find ways to cut the carbon we produce.
+    </p>
+    <button>
+     Watch the video
+    </button>
+   </div>
+  </div>
+  <hr>
+  <div class="GHG hidden">
+    <h1 style=" color: rgb(32, 169, 8); font-family: cursive; font-weight: bolder; display: flex; justify-content: center; align-items: center;"> What are Greenhouse Gas Emission Scopes?</h1>
+    <p style="font-family: cursive; font-weight: bolder; width: 1000px; margin-left: 20%;">Greenhouse Gas Protocol, a partnership between the World Resources Institute and the Business Council for Sustainable Development, categorizes greenhouse gas emissions into three Scopes:</p>
+    <div class="GHG img" style="display: flex; justify-content: center; align-content: center;">
+        <img src="WhatsApp Image 2025-02-14 at 18.58.38_7ca6a8d5.jpg" alt="Net Zero" style="width: 70%;">
+    </div>
+  </div>
+
+  <div class="carbon hidden" >
+    <h1 style=" color: rgb(32, 169, 8); font-family: cursive; font-weight: bolder; display: flex; justify-content: center; align-items: center;">What is carbon sequestration?</h1>
+    <div class="container">
+        <div class="text" style="margin-left: 10%; margin-right: 10%; font-family: cursive; font-size: 25px;">
+            Carbon sequestration – the practice of removing carbon dioxide (CO2) from the atmosphere and storing it – is one of the many approaches being taken to tackle climate change. Find out why this method is being used and the different ways in which CO2 is being removed and stored.
+        </div>
+        <div class="image">
+            <img alt="A power plant with cooling towers emitting steam, reflected in a body of water with ducks swimming in the foreground." height="400" src="https://storage.googleapis.com/a1aa/image/ZMvMO29j4lf_IoyAazyUFkMLzcTNoZgTF2TAxZeqUZM.jpg" width="600"/>
+        </div>
+        
+    </div>
+    <marquee behavior="" direction="left" style="font-size: 25px; font-family: cursive; font-weight: bold; background-color: rgb(0, 0, 0); color: #ff8400;">"Carbon sequestration is the capturing, removal and permanent storage of CO2 from the earth’s atmosphere. It’s recognised as a key method for removing carbon from the earth’s atmosphere.
+
+        This is important, as around 45% of the CO2 emitted by humans remains in the atmosphere, which is a significant factor behind global warming. Carbon sequestration can prevent further emissions from contributing to the heating of the planet.
+        
+        Carbon sequestration can happen in two basic forms: biologically or geologically. Also, while it’s being encouraged artificially through various biological and geological methods, it also happens naturally in the environment on the biggest scale."</marquee>
+  </div>
+
+  <div class="storage hidden">
+      <h1 style=" color: rgb(32, 169, 8); font-family: cursive; font-weight: bolder; display: flex; justify-content: center; align-items: center;"> What is carbon capture and storage? </h1>
+      <div class="container2">
+        <div class="image2">
+         <img alt="Diagram showing the process of carbon capture and storage, including a power plant, SO2 scrubber, flue gas cooler, absorber, stripper (regenerator), and sequestration." height="500"  src="image.png" width="700" style="border-radius: 40px;"/>
+        </div>
+        <div class="text2">
+         <p style="font-family: cursive; font-weight: bolder;">
+          Carbon capture and storage (CCS) is a way of reducing carbon dioxide (CO2) emissions, which could be key to helping to tackle global warming. It’s a three-step process, involving: capturing the CO2 produced by power generation or industrial activity, such as hydrogen production, steel or cement making; transporting it; and then permanently storing it deep underground. Here we look at the potential benefits of CCS and how it works.
+         </p>
+        </div>
+       </div>
+       <marquee behavior="" direction="left" style="font-size: 25px; font-family: cursive; font-weight: bold; background-color: rgb(0, 0, 0); color: #faf629;">"How does CCS actually work? There are three steps to the CCS process: 1. Capturing the CO2 for storage
+        The CO2 is separated from other gases produced in industrial processes, such as those at coal and natural-gas-fired power generation plants or steel or cement factories.
+        
+        2. Transport
+        The CO2 is then compressed and transported via pipelines, road transport or ships to a site for storage.
+        
+        3. Storage
+        Finally, the CO2 is injected into rock formations deep underground for permanent storage."</marquee>
+  </div>
+  <div class="button hidden" style="margin-top: 5px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+      <!-- <button style="border: 2px black solid;">Go To DashBoard</button> -->
+
+      <!-- HTML !-->
+
+
+      
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('.header', {duration: 5, x: 100, opacity: 0});
+
+    ScrollTrigger.create({
+        trigger: '.main-title',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        markers: false,
+        onEnter: () => gsap.to('.main-title', {opacity: 1, x: 70, duration: 5, ease: "power2.out"}),
+        onLeaveBack: () => gsap.to('.main-title', {opacity: 0, x: -50, duration: 1})
+    });
+     ScrollTrigger.create({
+        trigger: '.content',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        markers: false,
+        onEnter: () => gsap.to('.content', {opacity: 5, x: 31, duration: 1, ease: "power2.out"}),
+        onLeaveBack: () => gsap.to('.content', {opacity: 0, x: -100, duration: 1})
+    });
+
+    ScrollTrigger.create({
+        trigger: '.GHG',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        markers: false,
+        onEnter: () => gsap.to('.GHG', {opacity: 5, x: 30, duration: 1, ease: "power2.out"}),
+        onLeaveBack: () => gsap.to('.GHG', {opacity: 0, x: -50, duration: 2})
+    });
+
+    ScrollTrigger.create({
+        trigger: '.carbon',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        markers: false,
+        scrub: 1,
+        onEnter: () => gsap.to('.carbon', {opacity: 1, x: 30, duration: 1, ease: "power2.out"}),
+        onLeaveBack: () => gsap.to('.carbon', {opacity: 0, x: -50, duration: 3})
+    });
+
+    ScrollTrigger.create({
+        trigger: '.storage',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        markers: false,
+        onEnter: () => gsap.to('.storage', {opacity: 1, x: 20, duration: 1, ease: "power2.out"}),
+        onLeaveBack: () => gsap.to('.storage', {opacity: 0, y: 50, duration: 0.5})
+    });
+      ScrollTrigger.create({
+        trigger: '.button',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        markers: false,
+        onEnter: () => gsap.to('.button', {opacity: 1, x: -10, duration: 1, ease: "power2.out"}),
+        // onLeaveBack: () => gsap.to('.button', {opacity: 0, y: 50, duration: 0.5})
+    });
+
+
+  </script>
+ </body>
+</html>

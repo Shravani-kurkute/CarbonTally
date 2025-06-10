@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land of the Lost</title>
+    
+    <!-- Google Fonts Replacements -->
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=IM+Fell+French+Canon&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        body {
+          margin: 0;
+        }
+        header {
+            background: url('https://source.unsplash.com/1600x900/?mountains') no-repeat center center;
+            padding-top: 61.93333333%;
+            background-size: cover;
+            font-family: 'Pirata One', cursive;
+            position: relative;
+        }
+        header img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            z-index: 0;
+        }
+        header h1 {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            font-size: 12vw;
+            line-height: .8;
+            margin-top: 0;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 5px black;
+            z-index: 1
+            ;
+        }
+        header h1 span {
+            display: block;
+            font-size: 8.75vw;
+        }
+        main {
+            background: #fff;
+            position: relative;
+            border: 1px solid #fff;
+            font-family: 'IM Fell French Canon', serif;
+            font-size: 1.4rem;
+            padding: 2rem 25%;
+            line-height: 1.6;
+        }
+        @media all and (max-width: 400px) {
+            main { padding: 2rem; }
+        }
+
+        /* Register Now Button Styles */
+        .register-button {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Pirata One', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .register-button:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .register-button span {
+            font-size: 1.2rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header >
+        <h1>Land <span>of the</span> sustainability</h1>
+<img src="OIP.jpg" alt="Mountain Range Front">
+
+<div style="display: flex; justify-content: center; align-items: center;">
+    <a href="signup.html" class="register-button" >Register <span>Now</span></a>
+</div>
+    </header>
+</body>
+</html>
+
+
+

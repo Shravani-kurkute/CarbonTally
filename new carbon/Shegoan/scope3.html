@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope 3 Emissions</title>
+    <style>
+       /* General Page Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Headings */
+h1 {
+    color: #222;
+    font-size: 28px;
+    margin-top: 20px;
+}
+
+/* Chart Containers */
+.chart-container {
+    width: 80%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar Styling */
+nav {
+    background: #222;
+    padding: 10px 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 15px;
+    transition: 0.3s;
+}
+
+nav ul li a:hover {
+    background: #ff4500;
+    border-radius: 5px;
+}
+
+/* Chart Hover Effect */
+.chart-container:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .chart-container {
+        width: 95%;
+    }
+
+    nav ul {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    nav ul li {
+        margin: 5px 0;
+    }
+}
+/* Scope 3 Specific Styles */
+#scope3AreaChart {
+    background: rgba(255, 206, 86, 0.1);
+}
+
+#scope3DonutChart {
+    background: rgba(54, 162, 235, 0.1);
+}
+
+#scope3TrendChart {
+    background: rgba(75, 192, 192, 0.1);
+}
+/* Chart Section Styling */
+.chart-section {
+    margin: 40px auto;
+    width: 90%;
+    max-width: 1000px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-section h2 {
+    color: #000000;
+    font-size: 22px;
+}
+
+.chart-section p {
+    color: #000000;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+/* Chart Containers */
+.chart-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="netzero.html">Home</a></li>
+            <li><a href="scope1.html">Scope 1</a></li>
+            <li><a href="scope2.html">Scope 2</a></li>
+            <li><a href="comparative.html">Comparative</a></li>
+        </ul>
+    </nav>
+    <section class="chart-section">
+        <h2 style="font-family: cursive;">Scope 3 Emissions Breakdown</h2>
+        <p style="font-family: cursive;">Scope 3 emissions cover **all indirect emissions in an organization’s value chain**, including **purchased goods, transportation, employee commuting, and product lifecycle emissions**.</p>
+        <div class="chart-container">
+            <canvas id="scope3AreaChart"></canvas>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <h2 style="font-family: cursive;">Scope 3 Emissions Contribution</h2>
+        <p style="font-family: cursive;">This **donut chart** represents the share of emissions contributed by different Scope 3 categories, helping to identify the largest sources of emissions.</p>
+        <div class="chart-container">
+            <canvas id="scope3DonutChart"></canvas>
+        </div>
+    </section>
+    
+    <section class="chart-section">
+        <h2 style="font-family: cursive;">Scope 3 Emissions Trend</h2>
+        <p style="font-family: cursive;">The **line chart** shows how Scope 3 emissions have changed over time, based on sustainability reports.</p>
+        <div class="chart-container">
+            <canvas id="scope3TrendChart"></canvas>
+        </div>
+    </section>
+      
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const years = ["2020", "2021", "2022", "2023"];
+    const purchasedGoods = [4415000, 4930000, 5780000, 5564000];
+    const capitalGoods = [2962000, 4179000, 4026000, 5872000];
+    const fuelEnergy = [300000, 350000, 450000, 521000];
+    const businessTravel = [329356, 21901, 139000, 133000];
+    const employeeCommuting = [317000, 80000, 141000, 187000];
+    const useOfProducts = [2983000, 3950000, 5101000, 3941000];
+    const totalScope3 = [11653000, 13839000, 16111000, 16624000];
+
+    // Area Chart
+    new Chart(document.getElementById("scope3AreaChart"), {
+        type: "line",
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: "Purchased Goods & Services",
+                    data: purchasedGoods,
+                    backgroundColor: "rgba(255, 99, 132, 0.5)",
+                    borderColor: "red",
+                    fill: true
+                },
+                {
+                    label: "Capital Goods",
+                    data: capitalGoods,
+                    backgroundColor: "rgba(54, 162, 235, 0.5)",
+                    borderColor: "blue",
+                    fill: true
+                },
+                {
+                    label: "Fuel & Energy Activities",
+                    data: fuelEnergy,
+                    backgroundColor: "rgba(255, 206, 86, 0.5)",
+                    borderColor: "yellow",
+                    fill: true
+                },
+                {
+                    label: "Business Travel",
+                    data: businessTravel,
+                    backgroundColor: "rgba(75, 192, 192, 0.5)",
+                    borderColor: "green",
+                    fill: true
+                },
+                {
+                    label: "Employee Commuting",
+                    data: employeeCommuting,
+                    backgroundColor: "rgba(153, 102, 255, 0.5)",
+                    borderColor: "purple",
+                    fill: true
+                },
+                {
+                    label: "Use of Sold Products",
+                    data: useOfProducts,
+                    backgroundColor: "rgba(255, 159, 64, 0.5)",
+                    borderColor: "orange",
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Donut Chart
+    new Chart(document.getElementById("scope3DonutChart"), {
+        type: "doughnut",
+        data: {
+            labels: ["Purchased Goods & Services", "Capital Goods", "Fuel & Energy", "Business Travel", "Employee Commuting", "Use of Sold Products"],
+            datasets: [{
+                data: [5564000, 5872000, 521000, 133000, 187000, 3941000],
+                backgroundColor: ["red", "blue", "yellow", "green", "purple", "orange"]
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+    // Trend Line Chart
+    new Chart(document.getElementById("scope3TrendChart"), {
+        type: "line",
+        data: {
+            labels: years,
+            datasets: [{
+                label: "Total Scope 3 Emissions",
+                data: totalScope3,
+                borderColor: "black",
+                backgroundColor: "rgba(0, 0, 0, 0.3)",
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+});
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emission Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: url('carbonemission tracker.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
+            
+            
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-20 {
+            margin-bottom: 5rem;
+        }
+
+        .mb-12 {
+            margin-bottom: 3rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #1a365d;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 3.75rem;
+            }
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: #4a5568;
+            max-width: 48rem;
+            margin: 0 auto 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .icon {
+            color: #48bb78;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1a365d;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: #4a5568;
+        }
+
+        .how-it-works {
+            margin-bottom: 5rem;
+        }
+
+        .how-it-works h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #1a365d;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 64rem;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .steps-container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .step {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .step-icon {
+            width: 5rem;
+            height: 5rem;
+            background: #48bb78;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .step-icon i {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .benefits-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-icon {
+            color: #48bb78;
+            font-size: 1.875rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="text-center mb-20">
+            <h1>Carbon Emission Tracking Made Simple</h1>
+            <p class="hero-description">
+                Transform your environmental impact with our comprehensive carbon tracking system. 
+                Collect, analyze, and optimize your emissions data all in one place.
+            </p>
+            <div class="icon-container">
+                <i class="fas fa-chart-network" style="font-size: 5rem; color: #48bb78;"></i>
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-clipboard-list icon"></i>
+                <a href="emission-logger.html"><h3 class="feature-title">Log Data Collection</h3></a>
+                <p class="feature-description">
+                    Easily input and manage emission data from various sources with our intuitive logging system
+                </p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-file-invoice-dollar icon"></i>
+                <a href="energy-bill-analysis-with-data.html"><h3 class="feature-title">Energy Bill Analysis</h3></a>
+                <p class="feature-description">
+                    Automatically process and analyze energy consumption data from your utility bills
+                </p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-network-wired icon"></i>
+                <a href="iot-device-manager.html"><h3 class="feature-title">IoT Integration</h3></a>
+                <p class="feature-description">
+                    Connect seamlessly with IoT devices for real-time emission monitoring and data collection
+                </p>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h3 class="feature-title">Data Input</h3>
+                    <p class="feature-description">Upload or connect your data sources</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="feature-title">Processing</h3>
+                    <p class="feature-description">Automated analysis and calculations</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="feature-title">Insights</h3>
+                    <p class="feature-description">View reports and actionable insights</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="benefits-grid">
+            <div class="benefit-card">
+                <i class="fas fa-clock benefit-icon"></i>
+                <h3 class="feature-title">Time Saving</h3>
+                <p class="feature-description">Reduce manual data entry time by 75%</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-bullseye benefit-icon"></i>
+                <h3 class="feature-title">Accuracy</h3>
+                <p class="feature-description">Achieve 99.9% data accuracy</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-sync benefit-icon"></i>
+                <h3 class="feature-title">Real-time Updates</h3>
+                <p class="feature-description">Get instant updates on emissions</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-shield-alt benefit-icon"></i>
+                <h3 class="feature-title">Compliance</h3>
+                <p class="feature-description">Meet environmental regulations easily</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

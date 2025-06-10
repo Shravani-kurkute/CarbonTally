@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ecffed;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #d7ffdd;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 50%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            flex-grow: 1;
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .chart-container {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .back-button button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button button:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+        }
+
+        /* Ensure full visibility for taskbar or mobile navigation */
+        body, html {
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Prevent content from being hidden behind taskbar */
+        .container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Data Visualization</h1>
+        <div class="chart-container">
+            <h2>3D Pie Chart</h2>
+            <canvas id="pieChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Bar Graph</h2>
+            <canvas id="barGraph"></canvas>
+        </div>
+        <div class="back-button">
+            <button onclick="goBack()">Back</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-3d"></script>
+    <script>
+        function getStoredData(key) {
+            return parseFloat(localStorage.getItem(key)) || 0;
+        }
+
+        const totalCarbonSequestration = getStoredData('carbonSequestration');
+        const totalFuelCombustion = getStoredData('fuelCombustion');
+        const totalShippingEmissions = getStoredData('shippingEmissions');
+        const totalElectricityConsumption = getStoredData('electricityConsumption');
+        const totalExplosionEmissions = getStoredData('explosionEmissions');
+
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        const barCtx = document.getElementById('barGraph').getContext('2d');
+
+        // 3D Pie Chart
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Carbon Sequestration', 'Fuel Combustion', 'Shipping Emissions', 'Electricity Consumption', 'Explosion Emissions'],
+                datasets: [{
+                    label: 'Emissions Data',
+                    data: [totalCarbonSequestration, totalFuelCombustion, totalShippingEmissions, totalElectricityConsumption, totalExplosionEmissions],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                if (context.parsed > 0) {
+                                    label += ': ' + context.parsed.toFixed(2) + ' kg';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: true
+                    }
+                },
+                elements: {
+                    arc: {
+                        borderWidth: 2
+                    }
+                },
+                plugins: {
+                    'chartjs-plugin-3d': {
+                        enabled: true,
+                        angle: 45,
+                        depth: 0.5
+                    }
+                }
+            }
+        });
+
+        // Bar Graph
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Carbon Sequestration', 'Fuel Combustion', 'Shipping Emissions', 'Electricity Consumption', 'Explosion Emissions'],
+                datasets: [{
+                    label: 'Emissions Data (kg)',
+                    data: [totalCarbonSequestration, totalFuelCombustion, totalShippingEmissions, totalElectricityConsumption, totalExplosionEmissions],
+                    backgroundColor: '#36a2eb',
+                    borderColor: '#36a2eb',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function goBack() {
+            window.location.href = 'homepage.html';
+        }
+    </script>
+</body>
+
+</html>

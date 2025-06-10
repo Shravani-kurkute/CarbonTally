@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover CarbonTally's advanced emission monitoring for manufacturing. Track CO₂, NOx, PM, and energy in real-time to ensure compliance and sustainability.">
+    <title>Manufacturing Industry Emission Monitoring | CarbonTally</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'Jersey 25';
+            src: url('fonts/jersey-25.woff2') format('woff2'),
+                 url('fonts/jersey-25.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --font-family-jersey-25: 'Jersey 25', sans-serif;
+            --primary-color: #1E3A8A;
+            --secondary-color: #22C55E;
+            --accent-color: #4B5563;
+            --neon-glow: #06B6D4;
+            --spark-color: #F97316;
+            --background-color: #111827;
+            --background-secondary: #1F2937;
+            --text-color: #F3F4F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--background-color) 0%, var(--background-secondary) 100%);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: linear-gradient(90deg, var(--background-color), var(--accent-color));
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            width: 200px;
+            height: 60px;
+            background-image: url('logo.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            filter: brightness(1.1) drop-shadow(0 0 5px var(--neon-glow));
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--neon-glow);
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: scale(1.1);
+            color: var(--neon-glow);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.4;
+            filter: brightness(0.8);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(30, 58, 138, 0.3), rgba(34, 197, 94, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-text {
+            font-size: 4rem;
+            font-weight: bold;
+            font-family: var(--font-family-jersey-25);
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--neon-glow);
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero-subtext {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            max-width: 80%;
+            margin: 0 auto 2rem;
+        }
+
+        .emission-counter {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-top: 1rem;
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        #three-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--spark-color);
+            border-radius: 50%;
+            animation: spark 2s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes spark {
+            0% { opacity: 0; transform: translate(0, 0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translate(20px, 20px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(31, 41, 55, 0.7);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--accent-color);
+            position: relative;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 3px;
+            background: var(--secondary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro p, .how-it-helps p, .case-studies p, .testimonials p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .how-it-helps ul {
+            list-style: none;
+            margin-left: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .how-it-helps ul li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .how-it-helps ul li::before {
+            content: '⚙️';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .card-hover {
+            border-radius: 12px;
+            width: 100%;
+            max-width: 280px;
+            height: 360px;
+            position: relative;
+            overflow: hidden;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-glow);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin: 1rem auto;
+            display: block;
+            text-align: center;
+        }
+
+        .card-hover img {
+            width: 100%;
+            height: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .card-hover__content {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            background: linear-gradient(transparent, var(--background-secondary));
+        }
+
+        .card-hover__title {
+            font-size: 1.3rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-hover__text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, var(--secondary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .card-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .card-button:hover::before {
+            left: 0;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .tooltip {
+            visibility: hidden;
+            background: var(--background-color);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            z-index: 10;
+            border: 1px solid var(--neon-glow);
+        }
+
+        .card-hover:hover .tooltip {
+            visibility: visible;
+        }
+
+        .case-study-card {
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .case-study-card:hover {
+            background: rgba(31, 41, 55, 0.9);
+        }
+
+        .case-study-card h3 {
+            font-size: 1.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-study-details {
+            display: none;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .case-study-card.active .case-study-details {
+            display: block;
+        }
+
+        #map-canvas {
+            width: 100%;
+            height: 400px;
+            background: url('world_map.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            position: relative;
+            border: 1px solid var(--accent-color);
+        }
+
+        .map-pin {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .map-pin:hover {
+            transform: translate(-50%, -50%) scale(1.5);
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .map-tooltip {
+            visibility: hidden;
+            background: var(--background-color);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            z-index: 10;
+            border: 1px solid var(--neon-glow);
+        }
+
+        .map-pin:hover .map-tooltip {
+            visibility: visible;
+        }
+
+        .testimonials-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .testimonial {
+            min-width: 100%;
+            padding: 2rem;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .testimonial p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial h4 {
+            font-size: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .slider-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .slider-nav button {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider-nav button.active {
+            background: var(--secondary-color);
+        }
+
+        .dashboard-preview {
+            background: var(--background-color);
+            padding: 3rem;
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+            border: 1px solid var(--accent-color);
+        }
+
+        .dashboard-preview canvas {
+            max-width: 100%;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .dashboard-preview p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-top: 1rem;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, var(--background-color), var(--background-secondary));
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 1200px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+        }
+
+        .cta a {
+            display: inline-block;
+            margin: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--secondary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .cta a:hover::before {
+            left: 0;
+        }
+
+        .cta a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .footer {
+            background: var(--background-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--accent-color);
+        }
+
+        .footer p {
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--neon-glow);
+        }
+
+        .newsletter {
+            margin: 2rem 0;
+        }
+
+        .newsletter input {
+            padding: 0.75rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background: var(--background-secondary);
+            color: var(--text-color);
+            width: 200px;
+            margin-right: 0.5rem;
+        }
+
+        .newsletter button {
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary-color);
+            color: var(--background-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            background: var(--neon-glow);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--secondary-color);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtext, .emission-counter {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                width: 80%;
+                margin: 0.5rem auto;
+            }
+
+            .cta a {
+                display: block;
+                margin: 1rem auto;
+                width: 90%;
+            }
+
+            .newsletter input {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            #map-canvas {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    <header class="header">
+        <div class="logo"></div>
+        <nav class="nav-menu">
+            <a href="index.html" aria-label="Home">Home</a>
+            <a href="solutions.html" aria-label="Solutions">Solutions</a>
+            <a href="about.html" aria-label="About">About</a>
+            <a href="contact.html" aria-label="Contact">Contact</a>
+        </nav>
+        <div class="navbar-right">
+            <span class="icon material-symbols-outlined" aria-label="User Profile">person</span>
+            <span class="icon material-symbols-outlined" aria-label="Notifications">notifications</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="manufacturing_background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay"></div>
+        <canvas id="three-canvas"></canvas>
+        <div class="particles">
+            <div class="particle" style="top: 20%; left: 30%; animation-delay: 0s;"></div>
+            <div class="particle" style="top: 50%; left: 70%; animation-delay: 0.5s;"></div>
+            <div class="particle" style="top: 80%; left: 20%; animation-delay: 1s;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-text">CarbonTally for Manufacturing</h1>
+            <p class="hero-subtext">Real-time emission monitoring to drive sustainability and compliance.</p>
+            <p class="emission-counter">Emissions Reduced: <span id="counter">0</span> tons CO₂</p>
+        </div>
+    </section>
+
+    <section id="intro" class="section intro" style="background-image: url('factory_bg.jpg');">
+        <h2 class="section-title">Why Emission Monitoring Matters</h2>
+        <p>Manufacturing drives global economies but accounts for ~30% of CO₂ emissions. Heavy machinery, process heat, and logistics produce pollutants like CO₂, NOx, PM, and VOCs, impacting air quality and climate.</p>
+        <p>In India, the CPCB mandates CEMS for 17 high-pollution sectors, including automotive and textiles. Companies like Tata Motors, Nestlé, Arvind Mills, Britannia, and Dixon Tech face regulatory and investor pressure to reduce emissions. ESG frameworks (GRI, BRSR) demand transparent data.</p>
+        <p>CarbonTally’s solutions enable compliance, energy optimization, and a sustainable reputation.</p>
+    </section>
+
+    <section id="how-it-helps" class="section how-it-helps" style="background-image: url('tech_bg.jpg');">
+        <h2 class="section-title">How CarbonTally Empowers You</h2>
+        <p>Our platform combines IoT sensors, AI analytics, and intuitive dashboards for actionable insights:</p>
+        <ul>
+            <li>Track CO₂, NOx, PM, SO₂, and VOCs in real-time from critical equipment.</li>
+            <li>Optimize energy to reduce costs and emissions.</li>
+            <li>Ensure compliance with CPCB, EPA, and global standards.</li>
+            <li>Generate ESG reports for Scope 1, 2, and 3 emissions (GRI, TCFD, BRSR).</li>
+            <li>Predictive maintenance to prevent emission spikes.</li>
+            <li>Tailored solutions for automotive, textiles, electronics, and more.</li>
+        </ul>
+        <p>Lead the way in sustainable manufacturing with CarbonTally.</p>
+    </section>
+
+    <section id="sub-industries" class="section sub-industries" style="background-image: url('industry_bg.jpg');">
+        <h2 class="section-title">Our Manufacturing Solutions</h2>
+        <p>CarbonTally addresses emission challenges across sub-industries:</p>
+        <div class="cards-container">
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">directions_car</span>
+                <img src="/automotive.png" alt="Automotive Manufacturing">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Automotive</h3>
+                    <p class="card-hover__text">Monitor VOCs, CO₂, PM from welding (e.g., Tata Motors).</p>
+                    <a href="/new carbon/Manufacturing/automotive/automotive.html" class="card-button" aria-label="Learn more about Automotive Manufacturing">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 500 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">fabric</span>
+                <img src="/textile.png" alt="Textile & Apparel">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Textile & Apparel</h3>
+                    <p class="card-hover__text">Track NOx, SO₂ from dyeing (e.g., Arvind Mills).</p>
+                    <a href="/new carbon/Manufacturing/textiles/textile.html" class="card-button" aria-label="Learn more about Textile and Apparel">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 300 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">restaurant</span>
+                <img src="/food.png" alt="Food & Beverage">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Food & Beverage</h3>
+                    <p class="card-hover__text">Compliance for ovens, boilers (e.g., Britannia).</p>
+                    <a href="/new carbon/Manufacturing/food processing/food.html" class="card-button" aria-label="Learn more about Food and Beverage">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 200 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">memory</span>
+                <img src="/electronics.png" alt="Electronics">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Electronics</h3>
+                    <p class="card-hover__text">Minimize VOCs from soldering (e.g., Dixon Tech).</p>
+                    <a href="/new carbon/Manufacturing/consumer electronics/electronic.html" class="card-button" aria-label="Learn more about Electronics Manufacturing">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 150 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">build</span>
+                <img src="/heavymachine.png" alt="Heavy Machinery">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Heavy Machinery</h3>
+                    <p class="card-hover__text">Reduce CO₂, NOx from forging, casting.</p>
+                    <a href="/new carbon/Manufacturing/HeavyMachinery_Tools/heavy.html" class="card-button" aria-label="Learn more about Heavy Machinery">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 600 tons CO₂/year</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="case-studies" class="section case-studies" style="background-image: url('success_bg.jpg');">
+        <h2 class="section-title">Success Stories</h2>
+        <p>Learn how leading manufacturers use CarbonTally to achieve sustainability:</p>
+        <div class="case-study-card">
+            <h3>Tata Motors</h3>
+            <p>Reduced VOC emissions by 40% with real-time monitoring.</p>
+            <div class="case-study-details">
+                <p>By integrating CarbonTally’s IoT sensors, Tata Motors optimized painting processes, cutting emissions and saving $2M annually.</p>
+            </div>
+        </div>
+        <div class="case-study-card">
+            <h3>Nestlé</h3>
+            <p>Achieved 99.9% compliance with CPCB norms for boiler emissions.</p>
+            <div class="case-study-details">
+                <p>CarbonTally’s dashboards enabled Nestlé to streamline ESG reporting and reduce energy usage by 18%.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="map" class="section map" style="background-image: url('map_bg.jpg');">
+        <h2 class="section-title">Our Global Reach</h2>
+        <p>CarbonTally supports manufacturing hubs worldwide:</p>
+        <div id="map-canvas">
+            <div class="map-pin" style="top: 50%; left: 20%;">
+                <span class="map-tooltip">Shanghai, China</span>
+            </div>
+            <div class="map-pin" style="top: 30%; left: 70%;">
+                <span class="map-tooltip">Detroit, USA</span>
+            </div>
+            <div class="map-pin" style="top: 40%; left: 50%;">
+                <span class="map-tooltip">Pune, India</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="section testimonials" style="background-image: url('testimonials_bg.jpg');">
+        <h2 class="section-title">What Industry Leaders Say</h2>
+        <div class="testimonials-slider">
+            <div id="slides" class="slider-container">
+                <div class="testimonial">
+                    <p>“CarbonTally transformed our emission tracking, saving us millions.”</p>
+                    <h4>- Jane Smith, COO, Tata Motors</h4>
+                </div>
+                <div class="testimonial">
+                    <p>“The real-time dashboards are a game-changer for compliance.”</p>
+                    <h4>- John Doe, Sustainability Head, Nestlé</h4>
+                </div>
+            </div>
+            <div class="slider-nav">
+                <button class="slider-dot active" data-slide="0"></button>
+                <button class="slider-dot" data-slide="1"></button>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="section dashboard-preview">
+        <h2 class="section-title">Live Dashboard Preview</h2>
+        <p>Monitor emissions with CarbonTally’s dynamic real-time dashboards.</p>
+        <canvas id="dashboardCanvas" width="600" height="300"></canvas>
+        <p>Animated trends, customizable widgets, and compliance alerts.</p>
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Drive Sustainability with CarbonTally</h2>
+        <p>Join leading manufacturers in transforming operations with real-time emission monitoring.</p>
+        <a href="https://carbon-tally.com/book-demo" target="_blank" aria-label="Book a Demo">Book a Plant Demo</a>
+        <a href="/assets/use_case_manufacturing.pdf" download aria-label="Download Use Case">Download Use Case (PDF)</a>
+    </section>
+
+    <footer class="footer">
+        <div class="newsletter">
+            <h3>Stay Ahead with CarbonTally</h3>
+            <input type="email" id="newsletterEmail" placeholder="Enter your email" aria-label="Email for newsletter">
+            <button type="submit">Subscribe</button>
+        </div>
+        <p>Contact Us: <a href="mailto:info@carbontally.com">info@carbontally.com</a> | +91-123-456-7890</p>
+        <p><a href="https://linkedin.com/company/carbontally">LinkedIn</a> | <a href="https://github.com/carbontally">GitHub</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a></p>
+        <p>© 2025 CarbonTally. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Three.js 3D Gear
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const gearGeometry = new THREE.TorusGeometry(10, 3, 16, 100);
+        const material = new THREE.MeshBasicMaterial({ color: 0x06B6D4, wireframe: true });
+        const gear = new THREE.Mesh(gearGeometry, material);
+        scene.add(gear);
+
+        camera.position.z = 30;
+
+        function animateGear() {
+            requestAnimationFrame(animateGear);
+            gear.rotation.x += 0.01;
+            gear.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animateGear();
+
+        // Emission Counter
+        let counter = 0;
+        const counterElement = document.getElementById('counter');
+        setInterval(() => {
+            counter += 100;
+            counterElement.textContent = counter.toLocaleString();
+        }, 2000);
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.querySelector('.progress-bar').style.width = scrollPercent + '%';
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('.nav-menu a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Case Study Toggle
+        document.querySelectorAll('.case-study-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+            });
+        });
+
+        // Testimonials Slider
+        const sliderContainer = document.querySelector('.slider-container');
+        const sliderDots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+
+        sliderDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                sliderDots.forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+            });
+        });
+
+        // Dashboard Preview (Animated Line Graph)
+        const canvas = document.getElementById('dashboardCanvas');
+        const ctx = canvas.getContext('2d');
+        let frame = 0;
+
+        function animateDashboard() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Data
+            const points = [
+                { x: 50, y: 250 - Math.sin(frame / 20) * 50 },
+                { x: 150, y: 250 - Math.sin((frame + 10) / 20) * 60 },
+                { x: 250, y: 250 - Math.sin((frame + 20) / 20) * 30 },
+                { x: 350, y: 250 - Math.sin((frame + 30) / 20) * 70 },
+                { x: 450, y: 250 - Math.sin((frame + 40) / 20) * 50 },
+            ];
+
+            // Draw axes
+            ctx.strokeStyle = '#4B5563';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(40, 50);
+            ctx.lineTo(40, 250);
+            ctx.lineTo(550, 250);
+            ctx.stroke();
+
+            // Draw line
+            ctx.strokeStyle = '#22C55E';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            points.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#111827';
+            ctx.font = '14px Space Grotesk';
+            ctx.textAlign = 'center';
+            ctx.fillText('CO₂ (ppm)', 100, 280);
+            ctx.fillText('PM2.5 (µg/m³)', 300, 280);
+            ctx.fillText('Energy (kWh)', 500, 280);
+
+            frame++;
+            requestAnimationFrame(animateDashboard);
+        }
+        animateDashboard();
+    </script>
+</body>
+</html>

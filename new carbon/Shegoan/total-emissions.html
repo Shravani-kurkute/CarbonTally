@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Emissions</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('18.webp') no-repeat center center/cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Glassmorphism Effect for Container */
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
+        /* Title */
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: black;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Emissions Text Styling */
+        p {
+            font-size: 16px;
+            margin: 8px 0;
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* Button Styling */
+        .back-button {
+            background-color: #ff6666;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Total Emissions</h1>
+        <div id="totalResults">
+            <p>Total Carbon Sequestration: <span id="totalCarbonSequestration">0</span> kg</p>
+            <p>Total Fuel Combustion Emissions: <span id="totalFuelCombustion">0</span> kg</p>
+            <p>Total Shipping Emissions: <span id="totalShippingEmissions">0</span> kg</p>
+            <p>Total Electricity Consumption: <span id="totalElectricityConsumption">0</span> kg</p>
+            <p>Total Explosion Emissions: <span id="totalExplosionEmissions">0</span> kg</p>
+            <p>Total Carbon Footprint: <span id="totalCarbonEmissions">0</span> kg</p>
+            <button class="back-button" onclick="goBack()">Back</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to retrieve stored data or return 0 if not found
+        function getStoredData(key) {
+            return parseFloat(localStorage.getItem(key)) || 0;
+        }
+
+        // Function to calculate total emissions
+        function updateTotalEmissions() {
+            // Retrieve stored emissions data
+            const totalCarbonSequestration = getStoredData('carbonSequestration');
+            const totalFuelCombustion = getStoredData('fuelCombustion');
+            const totalShippingEmissions = getStoredData('shippingEmissions');
+            const totalElectricityConsumption = getStoredData('electricityConsumption');
+            const totalExplosionEmissions = getStoredData('explosionEmissions');
+            const totalCarbonFootprints = totalCarbonSequestration + totalFuelCombustion + totalShippingEmissions + totalElectricityConsumption + totalExplosionEmissions;
+
+            // Update page content with retrieved values
+            document.getElementById('totalCarbonSequestration').textContent = totalCarbonSequestration.toFixed(2);
+            document.getElementById('totalFuelCombustion').textContent = totalFuelCombustion.toFixed(2);
+            document.getElementById('totalShippingEmissions').textContent = totalShippingEmissions.toFixed(2);
+            document.getElementById('totalElectricityConsumption').textContent = totalElectricityConsumption.toFixed(2);
+            document.getElementById('totalExplosionEmissions').textContent = totalExplosionEmissions.toFixed(2);
+            document.getElementById('totalCarbonEmissions').textContent = totalCarbonFootprints.toFixed(2);
+        }
+
+        // Update the totals when the page loads
+        updateTotalEmissions();
+
+        function goBack() {
+            window.location.href = 'mainPage.html'; // Replace with your actual main page file
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Consumption</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('12.jpg') no-repeat center center/cover;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(215, 255, 221, 0.15);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 0 5px;
+            text-align: left;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #aaa;
+            outline: none;
+            transition: 0.3s ease-in-out;
+            background: rgba(255, 255, 255, 0.2);
+            color: #333;
+        }
+
+        input:focus {
+            border-color: #42a5f5;
+            box-shadow: 0 0 5px rgba(66, 165, 245, 0.5);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .calculate {
+            background: #4caf50;
+            color: white;
+        }
+
+        .back {
+            background: #ff6666;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(244, 244, 244, 0.15);
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            text-align: left;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .results p {
+            font-size: 16px;
+            margin: 8px 0;
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Electricity Consumption</h1>
+        <form id="electricityForm">
+            <label for="energyPerTime">Energy Per Time (kWh/day):</label>
+            <input type="number" id="energyPerTime" step="0.01" placeholder="Enter kWh/day" required>
+
+            <label for="responsibleArea">Responsible Area (m²):</label>
+            <input type="number" id="responsibleArea" step="0.01" placeholder="Enter area in m²" required>
+
+            <label for="totalArea">Total Area (m²):</label>
+            <input type="number" id="totalArea" step="0.01" placeholder="Enter total area in m²" required>
+
+            <div class="button-container">
+                <button type="button" class="calculate" onclick="calculateElectricityConsumption()">Calculate</button>
+                <button type="button" class="back" onclick="goBack()">Back</button>
+            </div>
+        </form>
+
+        <div id="results" class="results">
+            <p>CO2 Emissions: <span id="co2Emissions">0</span> kg/day</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateElectricityConsumption() {
+            const energyPerTime = parseFloat(document.getElementById('energyPerTime').value);
+            const responsibleArea = parseFloat(document.getElementById('responsibleArea').value);
+            const totalArea = parseFloat(document.getElementById('totalArea').value);
+
+            if (isNaN(energyPerTime) || isNaN(responsibleArea) || isNaN(totalArea) || energyPerTime <= 0 || responsibleArea <= 0 || totalArea <= 0) {
+                alert("Please enter valid numbers.");
+                return;
+            }
+
+            const co2Emissions = (energyPerTime * responsibleArea / totalArea) * 0.233;
+            localStorage.setItem('electricityConsumption', co2Emissions);
+            document.getElementById('co2Emissions').textContent = co2Emissions.toFixed(2);
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

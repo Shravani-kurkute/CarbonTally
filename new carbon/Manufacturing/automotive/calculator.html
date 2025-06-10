@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Automotive Emissions Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+        }
+        .section-header h2 {
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .section-header span {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapsible-content.open {
+            max-height: 2000px;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .error {
+            border-color: #ef4444;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        .export-btn {
+            background-color: #16a34a;
+            margin-top: 1rem;
+        }
+        .export-btn:hover {
+            background-color: #15803d;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .chart-grid .full-width {
+            grid-column: 1 / -1;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .summary {
+            background: #f0f4f8;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        .suggestions ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            line-height: 1.5;
+        }
+        .suggestions li {
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Automotive Manufacturing Emissions Dashboard</h1>
+
+        <!-- Input Form -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('inputSection')">
+                <h2>Input Parameters</h2>
+                <span>▼</span>
+            </div>
+            <div id="inputSection" class="collapsible-content open">
+                <div class="input-grid">
+                    <div class="form-group">
+                        <label for="diesel">Diesel Used (L):</label>
+                        <input type="number" id="diesel" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="dieselError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="electricity">Electricity Used (kWh):</label>
+                        <input type="number" id="electricity" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="electricityError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="paint">Paint Used per Day (L):</label>
+                        <input type="number" id="paint" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="paintError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="weldingHours">Welding Hours per Day:</label>
+                        <input type="number" id="weldingHours" step="0.1" min="0" max="24" oninput="validateInput(this)">
+                        <p id="weldingHoursError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="transport">Transport Distance (km):</label>
+                        <input type="number" id="transport" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="transportError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="naturalGas">Natural Gas Used (m³):</label>
+                        <input type="number" id="naturalGas" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="naturalGasError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="water">Water Used (L):</label>
+                        <input type="number" id="water" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="waterError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="steel">Steel Processed (kg):</label>
+                        <input type="number" id="steel" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="steelError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="solvent">Solvent Used (L):</label>
+                        <input type="number" id="solvent" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="solventError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="compressedAir">Compressed Air (m³):</label>
+                        <input type="number" id="compressedAir" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="compressedAirError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="vehicles">Vehicles Produced:</label>
+                        <input type="number" id="vehicles" min="1" step="1" oninput="validateInput(this)">
+                        <p id="vehiclesError" class="error-message"></p>
+                    </div>
+                </div>
+                <button onclick="calculateEmissions()">Calculate Emissions</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('resultsSection')">
+                <h2>Results & Visualizations</h2>
+                <span>▼</span>
+            </div>
+            <div id="resultsSection" class="collapsible-content open">
+                <div id="summary" class="summary"></div>
+                <button onclick="exportData()" class="export-btn">Export Data (CSV)</button>
+                <div class="chart-grid">
+                    <div>
+                        <canvas id="scopePie"></canvas>
+                    </div>
+                    <div>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                    <div>
+                        <canvas id="waterChart"></canvas>
+                    </div>
+                    <div>
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    <div>
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                    <div class="full-width">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                    <div class="full-width">
+                        <canvas id="areaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reduction Suggestions -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('suggestionsSection')">
+                <h2>Emission Reduction Suggestions</h2>
+                <span>▼</span>
+            </div>
+            <div id="suggestionsSection" class="collapsible-content open">
+                <div class="suggestions">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937;">Strategies to Reduce Emissions</h3>
+                    <ul>
+                        <li><strong>Optimize Diesel Use</strong>: Transition to electric or hybrid vehicles for internal transport to reduce Scope 1 diesel emissions.</li>
+                        <li><strong>Renewable Energy</strong>: Source electricity from renewable providers or install on-site solar/wind to lower Scope 2 emissions.</li>
+                        <li><strong>Low-VOC Paints</strong>: Use water-based or low-VOC paints to minimize volatile organic compound emissions from painting processes.</li>
+                        <li><strong>Efficient Welding</strong>: Optimize welding schedules to reduce hours, use energy-efficient welding machines, and implement automated welding systems.</li>
+                        <li><strong>Transport Efficiency</strong>: Consolidate shipments, use fuel-efficient trucks, or explore rail transport to reduce Scope 3 emissions.</li>
+                        <li><strong>Natural Gas Alternatives</strong>: Replace natural gas with biogas or electric heating systems to lower Scope 1 emissions.</li>
+                        <li><strong>Water Recycling</strong>: Implement water recycling systems and treat wastewater on-site to reduce water-related emissions.</li>
+                        <li><strong>Steel Sourcing</strong>: Use recycled steel or source from low-emission suppliers to decrease Scope 3 emissions.</li>
+                        <li><strong>Solvent Reduction</strong>: Switch to low-VOC or solvent-free cleaning agents and implement solvent recovery systems.</li>
+                        <li><strong>Compressed Air Optimization</strong>: Use energy-efficient compressors, fix leaks, and optimize air usage to reduce electricity-related emissions.</li>
+                        <li><strong>Process Optimization</strong>: Conduct energy audits, implement lean manufacturing, and use IoT for real-time process monitoring to minimize resource use.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Emission factors (assumed values, replace with regional data)
+        const EMISSION_FACTORS = {
+            diesel: 2.68,      // kg CO2e/liter
+            paint_voc: 3.5,    // kg VOC/liter
+            welding: 0.05,     // kg CO2e/hour
+            electricity: 0.5,  // kg CO2e/kWh
+            transport: 0.2,    // kg CO2e/km
+            naturalGas: 1.9,   // kg CO2e/m³
+            water: 0.0004,     // kg CO2e/liter (treatment and pumping)
+            steel: 1.8,        // kg CO2e/kg (processing)
+            solvent: 2.8,      // kg CO2e/liter (VOC emissions)
+            compressedAir: 0.1 // kg CO2e/m³ (electricity for compression)
+        };
+
+        // Load or initialize trend data
+        let trendData = JSON.parse(localStorage.getItem('trendData')) || [];
+        const MAX_DAYS = 7;
+
+        function validateInput(input) {
+            const errorElement = document.getElementById(`${input.id}Error`);
+            const value = parseFloat(input.value);
+            if (isNaN(value) || value < input.min || (input.max && value > input.max)) {
+                input.classList.add('error');
+                errorElement.textContent = `Value must be between ${input.min} and ${input.max || 'infinity'}`;
+                errorElement.classList.add('show');
+            } else {
+                input.classList.remove('error');
+                errorElement.classList.remove('show');
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('open');
+            section.previousElementSibling.querySelector('span').textContent = section.classList.contains('open') ? '▼' : '▶';
+        }
+
+        function calculateEmissions() {
+            // Validate inputs
+            const inputs = ['diesel', 'electricity', 'paint', 'weldingHours', 'transport', 'naturalGas', 'water', 'steel', 'solvent', 'compressedAir', 'vehicles'];
+            let valid = true;
+            inputs.forEach(id => {
+                const input = document.getElementById(id);
+                const value = parseFloat(input.value);
+                if (isNaN(value) || value < input.min || (input.max && value > input.max)) {
+                    valid = false;
+                    validateInput(input);
+                }
+            });
+            if (!valid) {
+                alert('Please correct invalid inputs before calculating.');
+                return;
+            }
+
+            // Get input values
+            const diesel = parseFloat(document.getElementById('diesel').value) || 0;
+            const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+            const paint = parseFloat(document.getElementById('paint').value) || 0;
+            const weldingHours = parseFloat(document.getElementById('weldingHours').value) || 0;
+            const transport = parseFloat(document.getElementById('transport').value) || 0;
+            const naturalGas = parseFloat(document.getElementById('naturalGas').value) || 0;
+            const water = parseFloat(document.getElementById('water').value) || 0;
+            const steel = parseFloat(document.getElementById('steel').value) || 0;
+            const solvent = parseFloat(document.getElementById('solvent').value) || 0;
+            const compressedAir = parseFloat(document.getElementById('compressedAir').value) || 0;
+            const vehicles = parseInt(document.getElementById('vehicles').value) || 1;
+
+            // Calculate emissions
+            const dieselEmis = diesel * EMISSION_FACTORS.diesel;
+            const paintEmis = paint * EMISSION_FACTORS.paint_voc;
+            const weldEmis = weldingHours * EMISSION_FACTORS.welding;
+            const naturalGasEmis = naturalGas * EMISSION_FACTORS.naturalGas;
+            const solventEmis = solvent * EMISSION_FACTORS.solvent;
+            const scope1 = dieselEmis + paintEmis + weldEmis + naturalGasEmis + solventEmis;
+
+            const scope2 = (electricity + compressedAir * EMISSION_FACTORS.compressedAir) * EMISSION_FACTORS.electricity;
+
+            const scope3 = (transport * EMISSION_FACTORS.transport) + (steel * EMISSION_FACTORS.steel);
+
+            const waterEmis = water * EMISSION_FACTORS.water;
+
+            const total = scope1 + scope2 + scope3 + waterEmis;
+            const perVehicle = vehicles > 0 ? (total / vehicles).toFixed(2) : 0;
+
+            // Update summary
+            document.getElementById('summary').innerHTML = `
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937;">Total Emissions: ${total.toFixed(2)} kg CO₂e</h3>
+                <p style="color: #4b5563;">Emission per Vehicle: <strong>${perVehicle} kg CO₂e</strong></p>
+                <div style="background: #e5e7eb; padding: 1rem; border-radius: 4px; margin-top: 0.5rem;">
+                    <strong>Scope 1</strong>: ${scope1.toFixed(2)} kg CO₂e (Diesel, Paint VOCs, Welding, Natural Gas, Solvent)<br>
+                    <strong>Scope 2</strong>: ${scope2.toFixed(2)} kg CO₂e (Electricity, Compressed Air)<br>
+                    <strong>Scope 3</strong>: ${scope3.toFixed(2)} kg CO₂e (Transport, Steel)<br>
+                    <strong>Water Emissions</strong>: ${waterEmis.toFixed(2)} kg CO₂e (Treatment & Pumping)
+                </div>
+            `;
+
+            // Store trend data
+            const today = new Date().toISOString().split('T')[0];
+            trendData.push({
+                date: today,
+                voc: paintEmis + solventEmis,
+                co2: total - (paintEmis + solventEmis),
+                scope1: scope1,
+                scope2: scope2,
+                scope3: scope3,
+                water: waterEmis,
+                diesel: dieselEmis,
+                paint: paintEmis,
+                welding: weldEmis,
+                naturalGas: naturalGasEmis,
+                solvent: solventEmis,
+                electricity: electricity * EMISSION_FACTORS.electricity,
+                compressedAir: compressedAir * EMISSION_FACTORS.compressedAir * EMISSION_FACTORS.electricity,
+                transport: transport * EMISSION_FACTORS.transport,
+                steel: steel * EMISSION_FACTORS.steel
+            });
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - MAX_DAYS);
+            trendData = trendData.filter(d => new Date(d.date) >= cutoffDate);
+            localStorage.setItem('trendData', JSON.stringify(trendData));
+
+            // Aggregate trend data
+            const dates = [...new Set(trendData.map(d => d.date))].sort();
+            const vocTrend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.voc, 0));
+            const co2Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.co2, 0));
+            const scope1Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope1, 0));
+            const scope2Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope2, 0));
+            const scope3Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope3, 0));
+            const waterTrend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.water, 0));
+
+            // Calculate efficiency metrics (normalized to per vehicle)
+            const efficiencyMetrics = {
+                diesel: diesel / vehicles,
+                electricity: electricity / vehicles,
+                paint: paint / vehicles,
+                welding: weldingHours / vehicles,
+                transport: transport / vehicles,
+                naturalGas: naturalGas / vehicles,
+                water: water / vehicles,
+                steel: steel / vehicles,
+                solvent: solvent / vehicles,
+                compressedAir: compressedAir / vehicles
+            };
+
+            // Destroy existing charts if they exist
+            if (window.pie && typeof window.pie.destroy === 'function') window.pie.destroy();
+            if (window.bar && typeof window.bar.destroy === 'function') window.bar.destroy();
+            if (window.water && typeof window.water.destroy === 'function') window.water.destroy();
+            if (window.radar && typeof window.radar.destroy === 'function') window.radar.destroy();
+            if (window.doughnut && typeof window.doughnut.destroy === 'function') window.doughnut.destroy();
+            if (window.line && typeof window.line.destroy === 'function') window.line.destroy();
+            if (window.area && typeof window.area.destroy === 'function') window.area.destroy();
+
+            // Pie chart
+            window.pie = new Chart(document.getElementById('scopePie'), {
+                type: 'pie',
+                data: {
+                    labels: ['Scope 1', 'Scope 2', 'Scope 3', 'Water'],
+                    datasets: [{
+                        data: [scope1, scope2, scope3, waterEmis],
+                        backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Emission Share by Scope', font: { size: 16 } },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+
+            // Bar chart
+            window.bar = new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Diesel', 'Paint (VOC)', 'Welding', 'Natural Gas', 'Solvent', 'Electricity', 'Comp. Air', 'Transport', 'Steel'],
+                    datasets: [{
+                        label: 'Emissions (kg CO₂e)',
+                        data: [
+                            dieselEmis,
+                            paintEmis,
+                            weldEmis,
+                            naturalGasEmis,
+                            solventEmis,
+                            electricity * EMISSION_FACTORS.electricity,
+                            compressedAir * EMISSION_FACTORS.compressedAir * EMISSION_FACTORS.electricity,
+                            transport * EMISSION_FACTORS.transport,
+                            steel * EMISSION_FACTORS.steel
+                        ],
+                        backgroundColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Emissions by Process', font: { size: 16 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'kg CO₂e' } }
+                    }
+                }
+            });
+
+            // Water emissions chart
+            window.water = new Chart(document.getElementById('waterChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Water Treatment'],
+                    datasets: [{
+                        label: 'Water Emissions (kg CO₂e)',
+                        data: [waterEmis],
+                        backgroundColor: '#06b6d4'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Water-Related Emissions', font: { size: 16 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'kg CO₂e' } }
+                    }
+                }
+            });
+
+            // Radar chart for process efficiency
+            window.radar = new Chart(document.getElementById('radarChart'), {
+                type: 'radar',
+                data: {
+                    labels: ['Diesel', 'Electricity', 'Paint', 'Welding', 'Transport', 'Natural Gas', 'Water', 'Steel', 'Solvent', 'Comp. Air'],
+                    datasets: [{
+                        label: 'Resource Use per Vehicle',
+                        data: [
+                            efficiencyMetrics.diesel,
+                            efficiencyMetrics.electricity,
+                            efficiencyMetrics.paint,
+                            efficiencyMetrics.welding,
+                            efficiencyMetrics.transport,
+                            efficiencyMetrics.naturalGas,
+                            efficiencyMetrics.water,
+                            efficiencyMetrics.steel,
+                            efficiencyMetrics.solvent,
+                            efficiencyMetrics.compressedAir
+                        ],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Process Efficiency per Vehicle', font: { size: 16 } }
+                    },
+                    scales: {
+                        r: { beginAtZero: true, title: { display: true, text: 'Resource Use per Vehicle' } }
+                    }
+                }
+            });
+
+            // Doughnut chart for emission intensity
+            window.doughnut = new Chart(document.getElementById('doughnutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Diesel', 'Paint', 'Welding', 'Natural Gas', 'Solvent', 'Electricity', 'Comp. Air', 'Transport', 'Steel', 'Water'],
+                    datasets: [{
+                        label: 'Emission Intensity',
+                        data: [
+                            dieselEmis / vehicles,
+                            paintEmis / vehicles,
+                            weldEmis / vehicles,
+                            naturalGasEmis / vehicles,
+                            solventEmis / vehicles,
+                            (electricity * EMISSION_FACTORS.electricity) / vehicles,
+                            (compressedAir * EMISSION_FACTORS.compressedAir * EMISSION_FACTORS.electricity) / vehicles,
+                            (transport * EMISSION_FACTORS.transport) / vehicles,
+                            (steel * EMISSION_FACTORS.steel) / vehicles,
+                            waterEmis / vehicles
+                        ],
+                        backgroundColor: [
+                            '#ef4444', '#f59e0b', '#10b981', '#6b7280', '#d946ef',
+                            '#3b82f6', '#06b6d4', '#84cc16', '#f97316', '#22d3ee'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Emission Intensity per Vehicle', font: { size: 16 } },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+
+            // Line chart (VOC and CO2)
+            window.line = new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: dates.length ? dates : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'VOC Emissions (kg)',
+                            data: vocTrend.length ? vocTrend : [paintEmis * 0.8, paintEmis, paintEmis * 1.1, paintEmis, paintEmis * 1.2, paintEmis, paintEmis * 0.9],
+                            borderColor: '#f59e0b',
+                            yAxisID: 'y-voc',
+                            fill: false
+                        },
+                        {
+                            label: 'CO2 Emissions (kg)',
+                            data: co2Trend.length ? co2Trend : [(total - (paintEmis + solventEmis)) * 0.8, total - (paintEmis + solventEmis), (total - (paintEmis + solventEmis)) * 1.1, total - (paintEmis + solventEmis), (total - (paintEmis + solventEmis)) * 1.2, total - (paintEmis + solventEmis), (total - (paintEmis + solventEmis)) * 0.9],
+                            borderColor: '#10b981',
+                            yAxisID: 'y-co2',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Daily VOC and CO2 Trends', font: { size: 16 } }
+                    },
+                    scales: {
+                        'y-voc': { type: 'linear', display: true, position: 'left', title: { display: true, text: 'VOC (kg)' } },
+                        'y-co2': { type: 'linear', display: true, position: 'right', title: { display: true, text: 'CO2 (kg)' }, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // Stacked area chart
+            window.area = new Chart(document.getElementById('areaChart'), {
+                type: 'line',
+                data: {
+                    labels: dates.length ? dates : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Scope 1',
+                            data: scope1Trend.length ? scope1Trend : [scope1 * 0.8, scope1, scope1 * 1.1, scope1, scope1 * 1.2, scope1, scope1 * 0.9],
+                            backgroundColor: 'rgba(239, 68, 68, 0.4)',
+                            fill: true
+                        },
+                        {
+                            label: 'Scope 2',
+                            data: scope2Trend.length ? scope2Trend : [scope2 * 0.8, scope2, scope2 * 1.1, scope2, scope2 * 1.2, scope2, scope2 * 0.9],
+                            backgroundColor: 'rgba(59, 130, 246, 0.4)',
+                            fill: true
+                        },
+                        {
+                            label: 'Scope 3',
+                            data: scope3Trend.length ? scope3Trend : [scope3 * 0.8, scope3, scope3 * 1.1, scope3, scope3 * 1.2, scope3, scope3 * 0.9],
+                            backgroundColor: 'rgba(16, 185, 129, 0.4)',
+                            fill: true
+                        },
+                        {
+                            label: 'Water',
+                            data: waterTrend.length ? waterTrend : [waterEmis * 0.8, waterEmis, waterEmis * 1.1, waterEmis, waterEmis * 1.2, waterEmis, waterEmis * 0.9],
+                            backgroundColor: 'rgba(6, 182, 212, 0.4)',
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Stacked Emission Trends by Scope', font: { size: 16 } }
+                    },
+                    scales: {
+                        y: { stacked: true, title: { display: true, text: 'kg CO₂e' } }
+                    }
+                }
+            });
+        }
+
+        function exportData() {
+            const csvContent = [
+                ['Date', 'VOC (kg)', 'CO2 (kg)', 'Scope 1 (kg)', 'Scope 2 (kg)', 'Scope 3 (kg)', 'Water (kg)', 'Diesel (kg)', 'Paint (kg)', 'Welding (kg)', 'Natural Gas (kg)', 'Solvent (kg)', 'Electricity (kg)', 'Compressed Air (kg)', 'Transport (kg)', 'Steel (kg)'],
+                ...trendData.map(d => [
+                    d.date,
+                    d.voc.toFixed(2),
+                    d.co2.toFixed(2),
+                    d.scope1.toFixed(2),
+                    d.scope2.toFixed(2),
+                    d.scope3.toFixed(2),
+                    d.water.toFixed(2),
+                    d.diesel.toFixed(2),
+                    d.paint.toFixed(2),
+                    d.welding.toFixed(2),
+                    d.naturalGas.toFixed(2),
+                    d.solvent.toFixed(2),
+                    d.electricity.toFixed(2),
+                    d.compressedAir.toFixed(2),
+                    d.transport.toFixed(2),
+                    d.steel.toFixed(2)
+                ])
+            ].map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `emissions_data_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

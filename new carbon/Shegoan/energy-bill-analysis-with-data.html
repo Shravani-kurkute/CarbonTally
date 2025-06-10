@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Bill Analysis</title>
+    <style>
+        /* Previous CSS styles remain the same */
+        body{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: url('enery_bill_analysis.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .bills-table {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .bills-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bills-table th {
+            background-color: #f9fafb;
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .bills-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .bills-table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Rest of the previous CSS */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="font-size: 2rem; font-weight: bold; margin-bottom: 2rem; color: #ffffff; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+            Energy Bill Analysis
+        </h1>
+        
+        
+        <button onclick="openModal()" style="background-color: #22c55e; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; margin-bottom: 2rem; cursor: pointer;">
+            Add New Bill
+        </button>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Bills</h3>
+                <p id="totalBills">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Cost</h3>
+                <p id="totalCost">$0.00</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Consumption</h3>
+                <p id="totalConsumption">0 kWh</p>
+            </div>
+            <div class="stat-card">
+                <h3>Average Rate</h3>
+                <p id="averageRate">$0.00/kWh</p>
+            </div>
+        </div>
+
+        <div class="bills-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill Date</th>
+                        <th>Provider</th>
+                        <th>Amount</th>
+                        <th>Consumption</th>
+                        <th>Rate</th>
+                        <th>Period</th>
+                    </tr>
+                </thead>
+                <tbody id="billsTableBody">
+                    <!-- Table content will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for adding new bill -->
+    <div id="addBillModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 600px;">
+            <h2 style="margin-bottom: 1.5rem;">Add New Bill</h2>
+            <form id="billForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label>Bill Date</label>
+                        <input type="date" id="bill_date" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </div>
+                    <div>
+                        <label>Utility Provider</label>
+                        <input type="text" id="utility_provider" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </div>
+                    <div>
+                        <label>Bill Amount ($)</label>
+                        <input type="number" id="bill_amount" step="0.01" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </div>
+                    <div>
+                        <label>Energy Consumed (kWh)</label>
+                        <input type="number" id="energy_consumed" step="0.01" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </div>
+                    <div>
+                        <label>Unit Rate ($/kWh)</label>
+                        <input type="number" id="unit_rate" step="0.0001" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </div>
+                    <div>
+                        <label>Billing Period Start</label>
+                        <input type="date" id="billing_period_start" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </div>
+                    <div>
+                        <label>Billing Period End</label>
+                        <input type="date" id="billing_period_end" required style="width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ddd; border-radius: 0.25rem;">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" onclick="closeModal()" style="padding: 0.5rem 1rem; border: 1px solid #ddd; border-radius: 0.25rem;">Cancel</button>
+                    <button type="button" onclick="saveBill()" style="padding: 0.5rem 1rem; background: #22c55e; color: white; border: none; border-radius: 0.25rem;">Save Bill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize empty bills array
+        let bills = [];
+
+        // Add sample data
+        function addSampleData() {
+            bills = [
+                {
+                    id: 1,
+                    bill_date: '2024-02-01',
+                    utility_provider: 'Energy Corp',
+                    bill_amount: 150.50,
+                    energy_consumed: 1000,
+                    unit_rate: 0.1505,
+                    billing_period_start: '2024-01-01',
+                    billing_period_end: '2024-01-31'
+                },
+                {
+                    id: 2,
+                    bill_date: '2024-01-01',
+                    utility_provider: 'Energy Corp',
+                    bill_amount: 145.75,
+                    energy_consumed: 950,
+                    unit_rate: 0.1534,
+                    billing_period_start: '2023-12-01',
+                    billing_period_end: '2023-12-31'
+                }
+            ];
+            updateTable();
+            updateStats();
+        }
+
+        // Call this on page load to show sample data
+        addSampleData();
+
+        function openModal() {
+            const modal = document.getElementById('addBillModal');
+            modal.style.display = 'flex';
+            
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bill_date').value = today;
+            document.getElementById('billing_period_start').value = today;
+            document.getElementById('billing_period_end').value = today;
+        }
+
+        function closeModal() {
+            document.getElementById('addBillModal').style.display = 'none';
+            document.getElementById('billForm').reset();
+        }
+
+        function saveBill() {
+            const billData = {
+                id: Date.now(),
+                bill_date: document.getElementById('bill_date').value,
+                utility_provider: document.getElementById('utility_provider').value,
+                bill_amount: parseFloat(document.getElementById('bill_amount').value),
+                energy_consumed: parseFloat(document.getElementById('energy_consumed').value),
+                unit_rate: parseFloat(document.getElementById('unit_rate').value),
+                billing_period_start: document.getElementById('billing_period_start').value,
+                billing_period_end: document.getElementById('billing_period_end').value
+            };
+
+            // Validate required fields
+            if (!billData.bill_date || !billData.utility_provider || !billData.bill_amount || 
+                !billData.energy_consumed || !billData.unit_rate || !billData.billing_period_start || 
+                !billData.billing_period_end) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Add to bills array
+            bills.push(billData);
+            
+            // Update display
+            updateTable();
+            updateStats();
+            
+            // Close modal and reset form
+            closeModal();
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('billsTableBody');
+            tbody.innerHTML = '';
+
+            bills.sort((a, b) => new Date(b.bill_date) - new Date(a.bill_date)).forEach(bill => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(bill.bill_date).toLocaleDateString()}</td>
+                    <td>${bill.utility_provider}</td>
+                    <td>${bill.bill_amount.toFixed(2)}</td>
+                    <td>${bill.energy_consumed.toFixed(2)} kWh</td>
+                    <td>${bill.unit_rate.toFixed(4)}/kWh</td>
+                    <td>${new Date(bill.billing_period_start).toLocaleDateString()} - ${new Date(bill.billing_period_end).toLocaleDateString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateStats() {
+            const totalBills = bills.length;
+            const totalCost = bills.reduce((sum, bill) => sum + bill.bill_amount, 0);
+            const totalConsumption = bills.reduce((sum, bill) => sum + bill.energy_consumed, 0);
+            const averageRate = totalConsumption ? totalCost / totalConsumption : 0;
+
+            document.getElementById('totalBills').textContent = totalBills;
+            document.getElementById('totalCost').textContent = `${totalCost.toFixed(2)}`;
+            document.getElementById('totalConsumption').textContent = `${totalConsumption.toFixed(2)} kWh`;
+            document.getElementById('averageRate').textContent = `${averageRate.toFixed(4)}/kWh`;
+        }
+    </script>
+</body>
+</html>

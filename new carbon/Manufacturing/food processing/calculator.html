@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food & Beverage Emissions Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+        }
+        .section-header h2 {
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .section-header span {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapsible-content.open {
+            max-height: 1000px;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .error {
+            border-color: #ef4444;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        .export-btn {
+            background-color: #16a34a;
+            margin-top: 1rem;
+        }
+        .export-btn:hover {
+            background-color: #15803d;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .chart-grid .full-width {
+            grid-column: 1 / -1;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .summary {
+            background: #f0f4f8;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        .indicator {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .indicator.low { background-color: #10b981; color: white; }
+        .indicator.medium { background-color: #f59e0b; color: white; }
+        .indicator.high { background-color: #ef4444; color: white; }
+        .suggestions ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            line-height: 1.5;
+        }
+        .suggestions li {
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Food & Beverage Processing Emissions Dashboard</h1>
+
+        <!-- Input Form -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('inputSection')">
+                <h2>Input Parameters</h2>
+                <span>▼</span>
+            </div>
+            <div id="inputSection" class="collapsible-content open">
+                <div class="input-grid">
+                    <div class="form-group">
+                        <label for="fuel">Fuel Used in Boilers/Ovens (liters):</label>
+                        <input type="number" id="fuel" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="fuelError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="refrigeration">Refrigeration Runtime (hours/day):</label>
+                        <input type="number" id="refrigeration" step="0.1" min="0" max="24" oninput="validateInput(this)">
+                        <p id="refrigerationError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="electricity">Electricity Used (kWh/day):</label>
+                        <input type="number" id="electricity" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="electricityError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="packages">Packages Produced per Day:</label>
+                        <input type="number" id="packages" step="1" min="1" oninput="validateInput(this)">
+                        <p id="packagesError" class="error-message"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="coldChain">Cold Chain Delivery Distance (km):</label>
+                        <input type="number" id="coldChain" step="0.1" min="0" oninput="validateInput(this)">
+                        <p id="coldChainError" class="error-message"></p>
+                    </div>
+                </div>
+                <button onclick="calculateEmissions()">Calculate Emissions</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('resultsSection')">
+                <h2>Results & Visualizations</h2>
+                <span>▼</span>
+            </div>
+            <div id="resultsSection" class="collapsible-content open">
+                <div id="summary" class="summary"></div>
+                <div id="hfcIndicator" class="indicator" style="display: none;"></div>
+                <button onclick="exportData()" class="export-btn">Export Data (CSV)</button>
+                <div class="chart-grid">
+                    <div>
+                        <canvas id="scopePie"></canvas>
+                    </div>
+                    <div>
+                        <canvas id="packageBar"></canvas>
+                    </div>
+                    <div class="full-width">
+                        <canvas id="seasonalLine"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reduction Suggestions -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('suggestionsSection')">
+                <h2>Emission Reduction Suggestions</h2>
+                <span>▼</span>
+            </div>
+            <div id="suggestionsSection" class="collapsible-content open">
+                <div class="suggestions">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937;">Strategies to Reduce Emissions</h3>
+                    <ul>
+                        <li><strong>Optimize Fuel Use</strong>: Switch to high-efficiency boilers/ovens or use biofuels to reduce Scope 1 fuel emissions.</li>
+                        <li><strong>Refrigerant Management</strong>: Use low-GWP refrigerants (e.g., ammonia, CO₂), maintain systems to minimize HFC leaks, and optimize refrigeration runtime.</li>
+                        <li><strong>Renewable Energy</strong>: Source electricity from renewable providers or install solar panels to lower Scope 2 emissions from conveyors and packaging.</li>
+                        <li><strong>Cold Chain Efficiency</strong>: Use electric or hybrid refrigerated trucks, optimize delivery routes, and consolidate shipments to reduce Scope 3 emissions.</li>
+                        <li><strong>Packaging Efficiency</strong>: Use lightweight, recyclable packaging and increase packages per batch to reduce emissions per package.</li>
+                        <li><strong>Process Optimization</strong>: Implement energy audits, use energy-efficient motors, and adopt IoT for real-time monitoring to minimize resource use.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Emission factors (assumed values, replace with regional data)
+        const EMISSION_FACTORS = {
+            fuel: 2.68,        // kg CO2e/liter (diesel-like fuel)
+            refrigeration: 0.5,// kg CO2e/hour (HFC leakage + electricity)
+            electricity: 0.5,  // kg CO2e/kWh
+            coldChain: 0.3,    // kg CO2e/km (refrigerated transport)
+            packaging: 0.05    // kg CO2e/package (processing overhead)
+        };
+
+        // Load or initialize trend data
+        let trendData = JSON.parse(localStorage.getItem('foodBeverageTrendData')) || [];
+        const MAX_DAYS = 7;
+
+        function validateInput(input) {
+            const errorElement = document.getElementById(`${input.id}Error`);
+            const value = parseFloat(input.value);
+            if (isNaN(value) || value < input.min || (input.max && value > input.max)) {
+                input.classList.add('error');
+                errorElement.textContent = `Value must be between ${input.min} and ${input.max || 'infinity'}`;
+                errorElement.classList.add('show');
+            } else {
+                input.classList.remove('error');
+                errorElement.classList.remove('show');
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('open');
+            section.previousElementSibling.querySelector('span').textContent = section.classList.contains('open') ? '▼' : '▶';
+        }
+
+        function calculateEmissions() {
+            // Validate inputs
+            const inputs = ['fuel', 'refrigeration', 'electricity', 'packages', 'coldChain'];
+            let valid = true;
+            inputs.forEach(id => {
+                const input = document.getElementById(id);
+                const value = parseFloat(input.value);
+                if (isNaN(value) || value < input.min || (input.max && value > input.max)) {
+                    valid = false;
+                    validateInput(input);
+                }
+            });
+            if (!valid) {
+                alert('Please correct invalid inputs before calculating.');
+                return;
+            }
+
+            // Get input values
+            const fuel = parseFloat(document.getElementById('fuel').value) || 0;
+            const refrigeration = parseFloat(document.getElementById('refrigeration').value) || 0;
+            const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+            const packages = parseInt(document.getElementById('packages').value) || 1;
+            const coldChain = parseFloat(document.getElementById('coldChain').value) || 0;
+
+            // Calculate emissions
+            const fuelEmis = fuel * EMISSION_FACTORS.fuel;
+            const hfcEmis = refrigeration * EMISSION_FACTORS.refrigeration;
+            const scope1 = fuelEmis + hfcEmis;
+
+            const scope2 = electricity * EMISSION_FACTORS.electricity;
+
+            const coldChainEmis = coldChain * EMISSION_FACTORS.coldChain;
+            const packagingEmis = packages * EMISSION_FACTORS.packaging;
+            const scope3 = coldChainEmis + packagingEmis;
+
+            const total = scope1 + scope2 + scope3;
+            const perThousandPackages = packages > 0 ? ((total / packages) * 1000).toFixed(2) : 0;
+
+            // HFC leakage indicator
+            const hfcThresholdLow = 5; // kg CO2e/day
+            const hfcThresholdHigh = 10; // kg CO2e/day
+            let hfcStatus = 'low';
+            let hfcMessage = `HFC Leakage: Low (${hfcEmis.toFixed(2)} kg CO₂e/day)`;
+            if (hfcEmis > hfcThresholdHigh) {
+                hfcStatus = 'high';
+                hfcMessage = `HFC Leakage: High (${hfcEmis.toFixed(2)} kg CO₂e/day) - Check refrigeration systems`;
+            } else if (hfcEmis > hfcThresholdLow) {
+                hfcStatus = 'medium';
+                hfcMessage = `HFC Leakage: Medium (${hfcEmis.toFixed(2)} kg CO₂e/day) - Monitor closely`;
+            }
+            const hfcIndicator = document.getElementById('hfcIndicator');
+            hfcIndicator.textContent = hfcMessage;
+            hfcIndicator.className = `indicator ${hfcStatus}`;
+            hfcIndicator.style.display = 'block';
+
+            // Seasonal variation factor (simulated: higher in summer months)
+            const month = new Date().getMonth(); // 0 = Jan, 5-7 = Jun-Aug
+            const seasonalFactor = (month >= 5 && month <= 7) ? 1.3 : 1.0; // 30% higher in summer
+
+            // Update summary
+            document.getElementById('summary').innerHTML = `
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937;">Total Emissions: ${total.toFixed(2)} kg CO₂e</h3>
+                <p style="color: #4b5563;">Emission per 1,000 Packages: <strong>${perThousandPackages} kg CO₂e</strong></p>
+                <div style="background: #e5e7eb; padding: 1rem; border-radius: 4px; margin-top: 0.5rem;">
+                    <strong>Scope 1</strong>: ${scope1.toFixed(2)} kg CO₂e (Fuel, HFCs)<br>
+                    <strong>Scope 2</strong>: ${scope2.toFixed(2)} kg CO₂e (Electricity)<br>
+                    <strong>Scope 3</strong>: ${scope3.toFixed(2)} kg CO₂e (Cold Chain, Packaging)
+                </div>
+            `;
+
+            // Store trend data
+            const today = new Date().toISOString().split('T')[0];
+            trendData.push({
+                date: today,
+                fuel: fuelEmis,
+                hfc: hfcEmis * seasonalFactor,
+                electricity: scope2,
+                coldChain: coldChainEmis,
+                packaging: packagingEmis,
+                scope1: scope1 * seasonalFactor,
+                scope2: scope2,
+                scope3: scope3,
+                total: (scope1 * seasonalFactor) + scope2 + scope3
+            });
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - MAX_DAYS);
+            trendData = trendData.filter(d => new Date(d.date) >= cutoffDate);
+            localStorage.setItem('foodBeverageTrendData', JSON.stringify(trendData));
+
+            // Aggregate trend data
+            const dates = [...new Set(trendData.map(d => d.date))].sort();
+            const scope1Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope1, 0));
+            const scope2Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope2, 0));
+            const scope3Trend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.scope3, 0));
+            const hfcTrend = dates.map(date => trendData.filter(d => d.date === date).reduce((sum, d) => sum + d.hfc, 0));
+
+            // Destroy existing charts if they exist
+            if (window.pie && typeof window.pie.destroy === 'function') window.pie.destroy();
+            if (window.bar && typeof window.bar.destroy === 'function') window.bar.destroy();
+            if (window.line && typeof window.line.destroy === 'function') window.line.destroy();
+
+            // Pie chart
+            window.pie = new Chart(document.getElementById('scopePie'), {
+                type: 'pie',
+                data: {
+                    labels: ['Scope 1', 'Scope 2', 'Scope 3'],
+                    datasets: [{
+                        data: [scope1 * seasonalFactor, scope2, scope3],
+                        backgroundColor: ['#ef4444', '#3b82f6', '#10b981']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Emission Share by Scope', font: { size: 16 } },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+
+            // Bar chart (Emission per 1,000 packages)
+            window.bar = new Chart(document.getElementById('packageBar'), {
+                type: 'bar',
+                data: {
+                    labels: ['Emission per 1,000 Packages'],
+                    datasets: [{
+                        label: 'kg CO₂e',
+                        data: [perThousandPackages],
+                        backgroundColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Emission per 1,000 Packages', font: { size: 16 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'kg CO₂e' } }
+                    }
+                }
+            });
+
+            // Line chart (Seasonal variation in refrigeration emissions)
+            window.line = new Chart(document.getElementById('seasonalLine'), {
+                type: 'line',
+                data: {
+                    labels: dates.length ? dates : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'HFC Emissions (kg CO₂e)',
+                        data: hfcTrend.length ? hfcTrend : [hfcEmis * 1.3, hfcEmis, hfcEmis * 1.3, hfcEmis, hfcEmis * 1.3, hfcEmis, hfcEmis],
+                        borderColor: '#f59e0b',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Seasonal Variation in Refrigeration Emissions', font: { size: 16 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'kg CO₂e' } }
+                    }
+                }
+            });
+
+        }
+
+        function exportData() {
+            const csvContent = [
+                ['Date', 'Fuel (kg)', 'HFC (kg)', 'Electricity (kg)', 'Cold Chain (kg)', 'Packaging (kg)', 'Scope 1 (kg)', 'Scope 2 (kg)', 'Scope 3 (kg)', 'Total (kg)'],
+                ...trendData.map(d => [
+                    d.date,
+                    d.fuel.toFixed(2),
+                    d.hfc.toFixed(2),
+                    d.electricity.toFixed(2),
+                    d.coldChain.toFixed(2),
+                    d.packaging.toFixed(2),
+                    d.scope1.toFixed(2),
+                    d.scope2.toFixed(2),
+                    d.scope3.toFixed(2),
+                    d.total.toFixed(2)
+                ])
+            ].map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `food_beverage_emissions_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

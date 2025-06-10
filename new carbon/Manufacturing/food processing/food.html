@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover CarbonTally's emission monitoring for food and beverage processing. Track CO₂, HFCs, and energy for sustainable production.">
+    <title>Food & Beverage Processing Emission Monitoring | CarbonTally</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Space+Grotesk:wght@300..700&display=stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'Jersey 25';
+            src: url('fonts/jersey-25.woff2') format('woff2'),
+                 url('fonts/jersey-25.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --font-family-jersey-25: 'Jersey 25', sans-serif;
+            --primary-color: #1E3A8A;
+            --secondary-color: #22C55E;
+            --accent-color: #4B5563;
+            --neon-glow: #06B6D4;
+            --spark-color: #F97316;
+            --background-color: #111827;
+            --background-secondary: #1F2937;
+            --text-color: #F3F4F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--background-color) 0%, var(--background-secondary) 100%);
+            color: var(--text-color);
+            overflow-x: hidden;
+            background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Crect x="10" y="10" width="80" height="10" fill="%231e40af" fill-opacity="0.05"/%3E%3Crect x="10" y="30" width="80" height="10" fill="%231e40af" fill-opacity="0.05"/%3E%3Crect x="10" y="50" width="80" height="10" fill="%231e40af" fill-opacity="0.05"/%3E%3Crect x="10" y="70" width="80" height="10" fill="%231e40af" fill-opacity="0.05"/%3E%3C/svg%3E');
+        }
+
+        .header {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: linear-gradient(90deg, var(--background-color), var(--accent-color));
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            width: 200px;
+            height: 60px;
+            background-image: url('logo.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            filter: brightness(1.1) drop-shadow(0 0 5px var(--neon-glow));
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--neon-glow);
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: scale(1.1);
+            color: var(--neon-glow);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.4;
+            filter: brightness(0.8);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(30, 58, 138, 0.3), rgba(34, 197, 94, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-text {
+            font-size: 4rem;
+            font-weight: bold;
+            font-family: var(--font-family-jersey-25);
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--neon-glow);
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero-subtext {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            max-width: 80%;
+            margin: 0 auto 2rem;
+        }
+
+        .emission-counter {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-top: 1rem;
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        #three-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--spark-color);
+            border-radius: 50%;
+            animation: spark 2s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes spark {
+            0% { opacity: 0; transform: translate(0, 0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translate(20px, 20px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(31, 41, 55, 0.7);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--accent-color);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 3px;
+            background: var(--secondary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro p, .emission-sources p, .how-it-helps p, .metrics p, .insights p, .case-studies p, .testimonials p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .how-it-helps ul, .insights ul {
+            list-style: none;
+            margin-left: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .how-it-helps ul li, .insights ul li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .how-it-helps ul li::before, .insights ul li::before {
+            content: '⚙️';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--background-secondary);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        tr {
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        tr:hover {
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem 0;
+        }
+
+        .card-hover {
+            border-radius: 12px;
+            width: 100%;
+            max-width: 280px;
+            height: 360px;
+            position: relative;
+            overflow: hidden;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-glow);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin: 1rem auto;
+            display: block;
+            text-align: center;
+        }
+
+        .card-hover img {
+            width: 100%;
+            height: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .card-hover__content {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            background: linear-gradient(transparent, var(--background-secondary));
+        }
+
+        .card-hover__title {
+            font-size: 1.3rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-hover__text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, var(--secondary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .card-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .card-button:hover::before {
+            left: 0;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .tooltip {
+            visibility: hidden;
+            background: var(--background-color);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            z-index: 10;
+            border: 1px solid var(--neon-glow);
+        }
+
+        .card-hover:hover .tooltip {
+            visibility: visible;
+        }
+
+        .case-study-card {
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .case-study-card:hover {
+            background: rgba(31, 41, 55, 0.9);
+        }
+
+        .case-study-card h3 {
+            font-size: 1.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-study-details {
+            display: none;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .case-study-card.active .case-study-details {
+            display: block;
+        }
+
+        .testimonials-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .testimonial {
+            min-width: 100%;
+            padding: 2rem;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .testimonial p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial h4 {
+            font-size: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .slider-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .slider-nav button {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider-nav button.active {
+            background: var(--secondary-color);
+        }
+
+        .dashboard-preview {
+            background: var(--background-color);
+            padding: 3rem;
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+            border: 1px solid var(--accent-color);
+        }
+
+        .dashboard-preview canvas {
+            max-width: 100%;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .dashboard-preview p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-top: 1rem;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--background-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--neon-glow);
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            font-size: 1.8rem;
+            color: var(--neon-glow);
+            margin-bottom: 1rem;
+        }
+
+        .modal-content p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background: var(--background-color);
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .modal-buttons button {
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-buttons button:first-child {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+
+        .modal-buttons button:last-child {
+            background: var(--secondary-color);
+            color: var(--background-color);
+        }
+
+        .cta {
+            background: linear-gradient(135deg, var(--background-color), var(--background-secondary));
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 1200px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+        }
+
+        .cta a {
+            display: inline-block;
+            margin: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--secondary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .cta a:hover::before {
+            left: 0;
+        }
+
+        .cta a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .footer {
+            background: var(--background-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--accent-color);
+        }
+
+        .footer p {
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--neon-glow);
+        }
+
+        .newsletter {
+            margin: 2rem 0;
+        }
+
+        .newsletter input {
+            padding: 0.75rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background: var(--background-secondary);
+            color: var(--text-color);
+            width: 200px;
+            margin-right: 0.5rem;
+        }
+
+        .newsletter button {
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary-color);
+            color: var(--background-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            background: var(--neon-glow);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--secondary-color);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtext, .emission-counter {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                width: 80%;
+                margin: 0.5rem auto;
+            }
+
+            .cta a {
+                display: block;
+                margin: 1rem auto;
+                width: 90%;
+            }
+
+            .newsletter input {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .table-container {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    <header class="header">
+        <div class="logo"></div>
+        <nav class="nav-menu">
+            <a href="index.html" aria-label="Home">Home</a>
+            <a href="solutions.html" aria-label="Solutions">Solutions</a>
+            <a href="about.html" aria-label="About">About</a>
+            <a href="contact.html" aria-label="Contact">Contact</a>
+        </nav>
+        <div class="navbar-right">
+            <span class="icon material-symbols-outlined" aria-label="User Profile">person</span>
+            <span class="icon material-symbols-outlined" aria-label="Notifications">notifications</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="food_beverage_bg.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay"></div>
+        <canvas id="three-canvas"></canvas>
+        <div class="particles">
+            <div class="particle" style="top: 20%; left: 30%; animation-delay: 0s;"></div>
+            <div class="particle" style="top: 50%; left: 70%; animation-delay: 0.5s;"></div>
+            <div class="particle" style="top: 80%; left: 20%; animation-delay: 1s;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-text">🥫 Food & Beverage Processing</h1>
+            <p class="hero-subtext">Real-time emission monitoring for sustainable food production.</p>
+            <p class="emission-counter">Emissions Reduced: <span id="counter">0</span> tons CO₂</p>
+        </div>
+    </section>
+
+    <section id="intro" class="section intro" style="background-image: url('food_factory_bg.jpg');">
+        <h2 class="section-title">🥫 Overview</h2>
+        <p>F&B factories generate emissions via steam-based cooking, cold storage, and packaging. Cleanliness requirements also increase energy use.</p>
+    </section>
+
+    <section id="emission-sources" class="section emission-sources" style="background-image: url('boiler_bg.jpg');">
+        <h2 class="section-title">🔧 Common Emission Sources</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Emissions</th>
+                        <th>Scope</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr onclick="showEmissionDetail('Boilers & ovens', 'CO₂, NOₓ, SO₂', 'Scope 1')">
+                        <td>Boilers & ovens</td>
+                        <td>CO₂, NOₓ, SO₂</td>
+                        <td>Scope 1</td>
+                    </tr>
+                    <tr onclick="showEmissionDetail('Cold storage (refrigerants)', 'HFCs, CO₂', 'Scope 1')">
+                        <td>Cold storage (refrigerants)</td>
+                        <td>HFCs, CO₂</td>
+                        <td>Scope 1</td>
+                    </tr>
+                    <tr onclick="showEmissionDetail('Conveyor line motors', 'CO₂ (indirect)', 'Scope 2')">
+                        <td>Conveyor line motors</td>
+                        <td>CO₂ (indirect)</td>
+                        <td>Scope 2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="how-it-helps" class="section how-it-helps" style="background-image: url('iot_sensors_bg.jpg');">
+        <h2 class="section-title">📊 How CarbonTally Helps</h2>
+        <ul>
+            <li>Monitor emissions from steam, refrigeration, and ovens</li>
+            <li>Sensors on power panels for energy-related CO₂</li>
+            <li>Detect refrigerant leaks and estimate emissions</li>
+        </ul>
+    </section>
+
+    <section id="metrics" class="section metrics" style="background-image: url('dashboard_bg.jpg');">
+        <h2 class="section-title">📈 Example Metrics</h2>
+        <div class="cards-container">
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">cloud</span>
+                <img src="packaging_line.jpg" alt="CO₂ per Food Packs">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">CO₂ per 1000 Packs</h3>
+                    <p class="card-hover__text">Daily CO₂ emissions per 1000 food packs</p>
+                    <a href="#" class="card-button" aria-label="Learn more about CO₂ Monitoring">Learn More</a>
+                    <span class="tooltip">Daily tracking</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">ac_unit</span>
+                <img src="cold_storage.jpg" alt="HFC Usage">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">HFC Usage</h3>
+                    <p class="card-hover__text">Sensor-integrated cold room monitoring</p>
+                    <a href="#" class="card-button" aria-label="Learn more about HFC Monitoring">Learn More</a>
+                    <span class="tooltip">Sensor-based</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">ac_unit</span>
+                <img src="/emisioncalculator.png" alt="HFC Usage">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Calculator</h3>
+                    <p class="card-hover__text">Sensor-integrated cold room monitoring</p>
+                    <a href="/new carbon/Manufacturing/food processing/calculator.html" class="card-button" aria-label="Learn more about HFC Monitoring">Learn More</a>
+                    <span class="tooltip">Sensor-based</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="insights" class="section insights" style="background-image: url('analytics_bg.jpg');">
+        <h2 class="section-title">🧠 Advanced Insights</h2>
+        <ul>
+            <li>Optimize boiler schedule based on emission trend</li>
+            <li>Predictive alerts for refrigerant loss or spikes</li>
+        </ul>
+    </section>
+
+    <section id="case-studies" class="section case-studies" style="background-image: url('success_bg.jpg');">
+        <h2 class="section-title">Success Stories</h2>
+        <div class="case-study-card">
+            <h3>Nestlé</h3>
+            <p>Reduced HFC emissions by 30% with leak detection.</p>
+            <div class="case-study-details">
+                <p>CarbonTally’s sensors helped Nestlé optimize cold storage, saving $1.5M annually.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="section testimonials" style="background-image: url('testimonials_bg.jpg');">
+        <h2 class="section-title">What Industry Leaders Say</h2>
+        <div class="testimonials-slider">
+            <div id="slides" class="slider-container">
+                <div class="testimonial">
+                    <p>“CarbonTally’s leak detection saved us significant costs.”</p>
+                    <h4>- Sanjay Kumar, Operations Head, Nestlé</h4>
+                </div>
+                <div class="testimonial">
+                    <p>“The dashboards simplified our sustainability reporting.”</p>
+                    <h4>- Meera Shah, Sustainability Manager, Britannia</h4>
+                </div>
+            </div>
+            <div class="slider-nav">
+                <button class="slider-dot active" data-slide="0"></button>
+                <button class="slider-dot" data-slide="1"></button>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="section dashboard-preview">
+        <h2 class="section-title">Live Dashboard Preview</h2>
+        <p>Monitor emissions with CarbonTally’s dynamic real-time dashboards.</p>
+        <canvas id="dashboardCanvas" width="600" height="300"></canvas>
+        <p>Track CO₂ emissions and HFC usage with animated trends and alerts.</p>
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Drive Sustainability in Food Processing</h2>
+        <p>Join leading food producers with CarbonTally’s real-time emission monitoring.</p>
+        <a href="#" onclick="openModal('report')" aria-label="Download Food Industry Report">📄 Food Industry Report</a>
+        <a href="#" onclick="openModal('demo')" aria-label="Schedule Monitoring Demo">🍪 Schedule Monitoring Demo</a>
+    </section>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title"></h3>
+            <p id="modal-description"></p>
+            <input id="modal-input" type="text" placeholder="Enter your email" aria-label="Email input">
+            <div class="modal-buttons">
+                <button onclick="closeModal()">Cancel</button>
+                <button id="modal-submit" onclick="submitModal()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="newsletter">
+            <h3>Stay Ahead with CarbonTally</h3>
+            <input type="email" id="newsletterEmail" placeholder="Enter your email" aria-label="Email for newsletter">
+            <button onclick="subscribeNewsletter()">Subscribe</button>
+        </div>
+        <p>Contact Us: <a href="mailto:info@carbontally.com">info@carbontally.com</a> | +91-123-456-7890</p>
+        <p><a href="https://linkedin.com/company/carbontally">LinkedIn</a> | <a href="https://github.com/carbontally">GitHub</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a></p>
+        <p>© 2025 CarbonTally. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Three.js 3D Conveyor Belt Roller
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const rollGeometry = new THREE.CylinderGeometry(6, 6, 10, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0x06B6D4, wireframe: true });
+        const roll = new THREE.Mesh(rollGeometry, material);
+        scene.add(roll);
+
+        camera.position.z = 20;
+
+        function animateRoll() {
+            requestAnimationFrame(animateRoll);
+            roll.rotation.x += 0.02;
+            roll.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animateRoll();
+
+        // Emission Counter
+        let counter = 0;
+        const counterElement = document.getElementById('counter');
+        setInterval(() => {
+            counter += 50;
+            counterElement.textContent = counter.toLocaleString();
+        }, 2000);
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.querySelector('.progress-bar').style.width = scrollPercent + '%';
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('.nav-menu a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Emission Table Details
+        function showEmissionDetail(source, emissions, scope) {
+            alert(`Source: ${source}\nEmissions: ${emissions}\nScope: ${scope}`);
+        }
+
+        // Modal Handling
+        function openModal(action) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const description = document.getElementById('modal-description');
+            const submitButton = document.getElementById('modal-submit');
+
+            if (action === 'demo') {
+                title.textContent = 'Schedule Monitoring Demo';
+                description.textContent = 'Enter your email to schedule a monitoring demo for your food processing facility.';
+                submitButton.setAttribute('data-action', 'demo');
+            } else if (action === 'report') {
+                title.textContent = 'Food Industry Report';
+                description.textContent = 'Enter your email to receive the Food Industry Report PDF.';
+                submitButton.setAttribute('data-action', 'report');
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            document.getElementById('modal-input').value = '';
+        }
+
+        function submitModal() {
+            const action = document.getElementById('modal-submit').getAttribute('data-action');
+            const email = document.getElementById('modal-input').value;
+            if (!email) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            alert(`${action === 'demo' ? 'Demo Request' : 'Report'} submitted for ${email}!`);
+            closeModal();
+        }
+
+        // Newsletter Subscription
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletterEmail').value;
+            if (!email) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            alert(`Subscribed with ${email}!`);
+            document.getElementById('newsletterEmail').value = '';
+        }
+
+        // Case Study Toggle
+        document.querySelectorAll('.case-study-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+            });
+        });
+
+        // Testimonials Slider
+        const sliderContainer = document.querySelector('.slider-container');
+        const sliderDots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+
+        sliderDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                sliderDots.forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+            });
+        });
+
+        // Dashboard Preview (Animated Line Graph)
+        const canvas = document.getElementById('dashboardCanvas');
+        const ctx = canvas.getContext('2d');
+        let frame = 0;
+
+        function animateDashboard() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Data for CO₂ and HFC Usage
+            const co2Points = [
+                { x: 50, y: 250 - Math.sin(frame / 20) * 50 },
+                { x: 150, y: 250 - Math.sin((frame + 10) / 20) * 60 },
+                { x: 250, y: 250 - Math.sin((frame + 20) / 20) * 30 },
+                { x: 350, y: 250 - Math.sin((frame + 30) / 20) * 70 },
+                { x: 450, y: 250 - Math.sin((frame + 40) / 20) * 50 },
+            ];
+            const hfcPoints = [
+                { x: 50, y: 250 - Math.cos(frame / 20) * 40 },
+                { x: 150, y: 250 - Math.cos((frame + 10) / 20) * 50 },
+                { x: 250, y: 250 - Math.cos((frame + 20) / 20) * 20 },
+                { x: 350, y: 250 - Math.cos((frame + 30) / 20) * 60 },
+                { x: 450, y: 250 - Math.cos((frame + 40) / 20) * 40 },
+            ];
+
+            // Draw axes
+            ctx.strokeStyle = '#4B5563';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(40, 50);
+            ctx.lineTo(40, 250);
+            ctx.lineTo(550, 250);
+            ctx.stroke();
+
+            // Draw CO₂ line
+            ctx.strokeStyle = '#22C55E';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(co2Points[0].x, co2Points[0].y);
+            co2Points.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.stroke();
+
+            // Draw HFC line
+            ctx.strokeStyle = '#06B6D4';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(hfcPoints[0].x, hfcPoints[0].y);
+            hfcPoints.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#111827';
+            ctx.font = '14px Space Grotesk';
+            ctx.textAlign = 'center';
+            ctx.fillText('CO₂ (tons)', 100, 280);
+            ctx.fillText('HFC Usage', 300, 280);
+            ctx.fillText('Time', 500, 280);
+
+            frame++;
+            requestAnimationFrame(animateDashboard);
+        }
+        animateDashboard();
+    </script>
+</body>
+</html>

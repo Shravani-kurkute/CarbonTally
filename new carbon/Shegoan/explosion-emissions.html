@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explosion Emissions</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        /* Body Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('13.png') no-repeat center center/cover;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Effect */
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Title */
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        /* Labels */
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 0 5px;
+            text-align: left;
+            color: #333;
+        }
+
+        /* Select & Input Fields */
+        select, input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #aaa;
+            outline: none;
+            transition: 0.3s ease-in-out;
+            background: rgba(255, 255, 255, 0.5);
+            color: #333;
+        }
+
+        select:focus, input:focus {
+            border-color: #42a5f5;
+            box-shadow: 0 0 5px rgba(66, 165, 245, 0.5);
+        }
+
+        /* Buttons */
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .calculate {
+            background: #4caf50;
+            color: white;
+        }
+
+        .back {
+            background: #ff6666;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        /* Glassmorphism Results Section */
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            text-align: left;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .results p {
+            font-size: 16px;
+            margin: 8px 0;
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Explosion Emissions</h1>
+        <form id="explosionForm">
+            <label for="explosiveType">Explosive Type:</label>
+            <select id="explosiveType">
+                <option value="dynamite">Dynamite</option>
+                <option value="TNT">TNT</option>
+            </select>
+
+            <label for="amountUsed">Amount of Explosive Used (kg):</label>
+            <input type="number" id="amountUsed" step="0.01" placeholder="Enter" required>
+
+            <div class="btn-container">
+                <button type="button" class="calculate" onclick="calculateExplosionEmissions()">Calculate</button>
+                <button type="button" class="back" onclick="goBack()">Back</button>
+            </div>
+        </form>
+
+        <div id="results" class="results">
+            <p>Explosive Type: <span id="explosiveTypeResult"></span></p>
+            <p>Amount Used: <span id="amountUsedResult"></span> kg</p>
+            <p>CO2 Emissions: <span id="co2EmissionsResult"></span> kg</p>
+            <p>CO Emissions: <span id="coEmissionsResult"></span> kg</p>
+            <p>NOx Emissions: <span id="noxEmissionsResult"></span> kg</p>
+            <p>NH3 Emissions: <span id="nh3EmissionsResult"></span> kg</p>
+            <p>HCN Emissions: <span id="hcnEmissionsResult"></span> kg</p>
+            <p>H2S Emissions: <span id="h2sEmissionsResult"></span> kg</p>
+            <p>SO2 Emissions: <span id="so2EmissionsResult"></span> kg</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateExplosionEmissions() {
+            const explosiveType = document.getElementById('explosiveType').value;
+            const amountUsed = parseFloat(document.getElementById('amountUsed').value);
+
+            if (isNaN(amountUsed) || amountUsed <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            const emissionFactors = {
+                'dynamite': { co2: 0.5, co: 0.3, nox: 0.1, nh3: 0.05, hcn: 0.02, h2s: 0.01, so2: 0.03 },
+                'TNT': { co2: 0.6, co: 0.4, nox: 0.12, nh3: 0.06, hcn: 0.025, h2s: 0.015, so2: 0.04 }
+            };
+
+            const factors = emissionFactors[explosiveType] || {};
+            document.getElementById('explosiveTypeResult').textContent = explosiveType;
+            document.getElementById('amountUsedResult').textContent = amountUsed.toFixed(2);
+
+            Object.keys(factors).forEach(key => {
+                document.getElementById(`${key}EmissionsResult`).textContent = (amountUsed * factors[key]).toFixed(2);
+            });
+
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+</body>
+</html>

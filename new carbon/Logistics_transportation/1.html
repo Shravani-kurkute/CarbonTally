@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track emissions across logistics and transportation with CarbonTally’s ESP32 sensors and cloud dashboards. Optimize fleets, couriers, and warehouses for sustainability.">
+    <title>Logistics & Transportation Emission Monitoring | CarbonTally</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'Jersey 25';
+            src: url('fonts/jersey-25.woff2') format('woff2'),
+                 url('fonts/jersey-25.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --font-family-jersey-25: 'Jersey 25', sans-serif;
+            --primary-color: #1E40AF; /* Deep blue for trust */
+            --secondary-color: #F59E0B; /* Amber for delivery */
+            --accent-color: #6B7280; /* Gray for infrastructure */
+            --neon-glow: #06B6D4; /* Cyan for tech */
+            --background-color: #0F172A; /* Dark slate */
+            --background-secondary: #1E293B; /* Darker slate */
+            --text-color: #F1F5F9; /* Light gray */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--background-color) 0%, var(--background-secondary) 100%);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: linear-gradient(to right, var(--background-color), var(--primary-color));
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            width: 160px;
+            height: auto;
+            background-image: url('logo.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            filter: brightness(1.2) drop-shadow(0 0 5px var(--neon-glow));
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--neon-glow);
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: scale(1.1);
+            color: var(--neon-glow);
+        }
+
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.4;
+            filter: brightness(0.6);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(30, 64, 175, 0.4), rgba(245, 158, 11, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            font-family: var(--font-family-jersey-25);
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--neon-glow);
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero-subtext {
+            font-size: 1.4rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            max-width: 80%;
+            margin: 0 auto 2rem;
+        }
+
+        .emission-counter {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            margin-top: 1rem;
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        #three-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            animation: spark 2s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes spark {
+            0% { opacity: 0; transform: translate(0, 0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translate(20px, 20px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(31, 41, 55, 0.7);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--accent-color);
+            position: relative;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 3px;
+            background: var(--secondary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro p, .how-it-helps p, .case-studies p, .testimonials p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .how-it-helps ul {
+            list-style: none;
+            margin-left: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .how-it-helps ul li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .how-it-helps ul li::before {
+            content: '🚚';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .card-hover {
+            border-radius: 12px;
+            width: 100%;
+            max-width: 280px;
+            height: 360px;
+            position: relative;
+            overflow: hidden;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-glow);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin: 1rem auto;
+            display: block;
+            text-align: center;
+        }
+
+        .card-hover img {
+            width: 100%;
+            height: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .card-hover__content {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            background: linear-gradient(transparent, var(--background-secondary));
+        }
+
+        .card-hover__title {
+            font-size: 1.3rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-hover__text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, var(--secondary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .card-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .card-button:hover::before {
+            left: 0;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .tooltip {
+            visibility: hidden;
+            background: var(--background-color);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            z-index: 10;
+            border: 1px solid var(--neon-glow);
+        }
+
+        .card-hover:hover .tooltip {
+            visibility: visible;
+        }
+
+        .case-study-card {
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .case-study-card:hover {
+            background: rgba(31, 41, 55, 0.9);
+        }
+
+        .case-study-card h3 {
+            font-size: 1.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-study-details {
+            display: none;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .case-study-card.active .case-study-details {
+            display: block;
+        }
+
+        #route-canvas {
+            width: 100%;
+            height: 400px;
+            background: var(--background-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .testimonials-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .testimonial {
+            min-width: 100%;
+            padding: 2rem;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .testimonial p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial h4 {
+            font-size: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .slider-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .slider-nav button {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider-nav button.active {
+            background: var(--secondary-color);
+        }
+
+        .dashboard-preview {
+            background: var(--background-color);
+            padding: 3rem;
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+            border: 1px solid var(--accent-color);
+        }
+
+        .dashboard-preview canvas {
+            max-width: 100%;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .dashboard-preview p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-top: 1rem;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, var(--background-color), var(--background-secondary));
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 1200px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+        }
+
+        .cta a {
+            display: inline-block;
+            margin: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--secondary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .cta a:hover::before {
+            left: 0;
+        }
+
+        .cta a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .footer {
+            background: var(--background-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--accent-color);
+        }
+
+        .footer p {
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--neon-glow);
+        }
+
+        .newsletter {
+            margin: 2rem 0;
+        }
+
+        .newsletter input {
+            padding: 0.75rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background: var(--background-secondary);
+            color: var(--text-color);
+            width: 200px;
+            margin-right: 0.5rem;
+        }
+
+        .newsletter button {
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary-color);
+            color: var(--background-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            background: var(--neon-glow);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--secondary-color);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtext, .emission-counter {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                width: 80%;
+                margin: 0.5rem auto;
+            }
+
+            .cta a {
+                display: block;
+                margin: 1rem auto;
+                width: 90%;
+            }
+
+            .newsletter input {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            #route-canvas {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    <header class="header">
+        <div class="logo"></div>
+        <nav class="nav-menu">
+            <a href="index.html" aria-label="Home">Home</a>
+            <a href="solutions.html" aria-label="Solutions">Solutions</a>
+            <a href="about.html" aria-label="About">About</a>
+            <a href="contact.html" aria-label="Contact">Contact</a>
+        </nav>
+        <div class="navbar-right">
+            <span class="icon material-symbols-outlined" aria-label="User Profile">person</span>
+            <span class="icon material-symbols-outlined" aria-label="Notifications">notifications</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="logistics_background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay"></div>
+        <canvas id="three-canvas"></canvas>
+        <div class="particles">
+            <div class="particle" style="top: 20%; left: 30%; animation-delay: 0s;"></div>
+            <div class="particle" style="top: 50%; left: 70%; animation-delay: 0.5s;"></div>
+            <div class="particle" style="top: 80%; left: 20%; animation-delay: 1s;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-text">CarbonTally for Logistics</h1>
+            <p class="hero-subtext">Track and reduce emissions across your transportation network.</p>
+            <p class="emission-counter">Emissions Reduced: <span id="counter">0</span> tons CO₂</p>
+        </div>
+    </section>
+
+    <section id="intro" class="section intro" style="background-image: url('highway_bg.jpg');">
+        <h2 class="section-title">The Emissions Behind Every Shipment</h2>
+        <p>Transportation accounts for over 25% of global CO₂ emissions. Delivery trucks, freight trains, and company fleets burn vast amounts of fossil fuels, yet many operators lack accurate emission tracking.</p>
+        <p>In India, logistics firms like Mahindra Logistics, Blue Dart, and Amazon face increasing regulatory scrutiny from MoEFCC and global ESG standards (GRI, CDP). Inefficient routes and idling vehicles drive up costs and emissions.</p>
+        <p>CarbonTally’s IoT and AI solutions empower fleets to monitor, optimize, and report emissions in real-time.</p>
+    </section>
+
+    <section id="how-it-helps" class="section how-it-helps" style="background-image: url('fleet_bg.jpg');">
+        <h2 class="section-title">How CarbonTally Empowers You</h2>
+        <p>Our platform delivers end-to-end emission monitoring for logistics:</p>
+        <ul>
+            <li>Attach ESP32-based sensors to fleet vehicles for real-time data.</li>
+            <li>Estimate CO₂ emissions based on fuel type, distance, and route conditions.</li>
+            <li>Cloud dashboards with fleet-wide emission heatmaps and compliance alerts.</li>
+            <li>Optimize routes to reduce fuel use and emissions.</li>
+            <li>Generate ESG reports for Scope 1 and 3 emissions (GRI, CDP).</li>
+            <li>Monitor warehouse energy usage and material handling emissions.</li>
+        </ul>
+        <p>Transform your logistics operations with sustainable, data-driven insights.</p>
+    </section>
+
+    <section id="sub-industries" class="section sub-industries" style="background-image: url('logistics_bg.jpg');">
+        <h2 class="section-title">Our Logistics Solutions</h2>
+        <p>CarbonTally tackles emission challenges across transportation sectors:</p>
+        <div class="cards-container">
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">local_shipping</span>
+                <img src="fleet.jpg" alt="Fleet Management">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Fleet Management</h3>
+                    <p class="card-hover__text">Track CO₂ from trucks (e.g., Mahindra Logistics).</p>
+                    <a href="/new carbon/Logistics_transportation/Fleet management/fleet_management.html" class="card-button" aria-label="Learn more about Fleet Management">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 400 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">local_post_office</span>
+                <img src="courier.jpg" alt="Courier Services">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Courier Services</h3>
+                    <p class="card-hover__text">Monitor vans, bikes (e.g., Blue Dart).</p>
+                    <a href="/new carbon/Logistics_transportation/Courier Services/courier_services.html" class="card-button" aria-label="Learn more about Courier Services">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 200 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">shopping_cart</span>
+                <img src="ecommerce.jpg" alt="E-commerce Delivery">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">E-commerce Delivery</h3>
+                    <p class="card-hover__text">Optimize last-mile delivery (e.g., Amazon).</p>
+                    <a href="/new carbon/Logistics_transportation/E-commerce/ecommerce_delivery.html" class="card-button" aria-label="Learn more about E-commerce Delivery">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 300 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">directions_boat</span>
+                <img src="shipping.jpg" alt="Shipping & Freight">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Shipping & Freight</h3>
+                    <p class="card-hover__text">Track emissions from cargo ships, trains.</p>
+                    <a href="/new carbon/Logistics_transportation/Shipping & Freight/shipping_freight.html" class="card-button" aria-label="Learn more about Shipping and Freight">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 600 tons CO₂/year</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">warehouse</span>
+                <img src="warehouse.jpg" alt="Warehouse Operations">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Warehouse Operations</h3>
+                    <p class="card-hover__text">Monitor energy, forklifts emissions.</p>
+                    <a href="/new carbon/Logistics_transportation/Warehouse_Operations/warehouse_operations.html" class="card-button" aria-label="Learn more about Warehouse Operations">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 150 tons CO₂/year</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="case-studies" class="section case-studies" style="background-image: url('success_bg.jpg');">
+        <h2 class="section-title">Success Stories</h2>
+        <p>Discover how logistics leaders leverage CarbonTally:</p>
+        <div class="case-study-card">
+            <h3>Mahindra Logistics</h3>
+            <p>Reduced fleet emissions by 35% with optimized routing.</p>
+            <div class="case-study-details">
+                <p>Using CarbonTally’s ESP32 sensors, Mahindra Logistics cut fuel use by 20%, saving $1.5M annually.</p>
+            </div>
+        </div>
+        <div class="case-study-card">
+            <h3>Blue Dart</h3>
+            <p>Achieved 95% compliance with MoEFCC emission norms.</p>
+            <div class="case-study-details">
+                <p>CarbonTally’s heatmaps helped Blue Dart identify high-emission routes, reducing CO₂ by 25%.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="route-map" class="section route-map" style="background-image: url('map_bg.jpg');">
+        <h2 class="section-title">Visualize Your Fleet’s Emissions</h2>
+        <p>Interactive route maps highlight emission hotspots and optimization opportunities.</p>
+        <canvas id="route-canvas"></canvas>
+    </section>
+
+    <section id="testimonials" class="section testimonials" style="background-image: url('testimonials_bg.jpg');">
+        <h2 class="section-title">What Logistics Leaders Say</h2>
+        <div class="testimonials-slider">
+            <div id="slides" class="slider-container">
+                <div class="testimonial">
+                    <p>“CarbonTally’s sensors revolutionized our fleet tracking.”</p>
+                    <h4>- Priya Sharma, VP Operations, Mahindra Logistics</h4>
+                </div>
+                <div class="testimonial">
+                    <p>“Real-time dashboards cut our emissions significantly.”</p>
+                    <h4>- Rajesh Kumar, Sustainability Lead, Amazon India</h4>
+                </div>
+            </div>
+            <div class="slider-nav">
+                <button class="slider-dot active" data-slide="0"></button>
+                <button class="slider-dot" data-slide="1"></button>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="section dashboard-preview">
+        <h2 class="section-title">Live Dashboard Preview</h2>
+        <p>Monitor fleet emissions with dynamic, real-time analytics.</p>
+        <canvas id="dashboardCanvas" width="600" height="300"></canvas>
+        <p>Customizable widgets, heatmaps, and compliance alerts.</p>
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Drive Sustainable Logistics with CarbonTally</h2>
+        <p>Join leading transportation firms in optimizing emissions and compliance.</p>
+        <a href="https://carbon-tally.com/request-pilot" target="_blank" aria-label="Request Fleet Pilot">Request Fleet Pilot</a>
+        <a href="/assets/fleet_emission_toolkit.pdf" download aria-label="Download Fleet Emission Toolkit">Download Toolkit (PDF)</a>
+    </section>
+
+    <footer class="footer">
+        <div class="newsletter">
+            <h3>Stay Ahead with CarbonTally</h3>
+            <input type="email" id="newsletterEmail" placeholder="Enter your email" aria-label="Email for newsletter">
+            <button type="submit">Subscribe</button>
+        </div>
+        <p>Contact Us: <a href="mailto:info@carbontally.com">info@carbontally.com</a> | +91-123-456-7890</p>
+        <p><a href="https://linkedin.com/company/carbontally">LinkedIn</a> | <a href="https://github.com/carbontally">GitHub</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a></p>
+        <p>© 2025 CarbonTally. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Three.js 3D Truck
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const truckGeometry = new THREE.BoxGeometry(8, 4, 3);
+        const material = new THREE.MeshBasicMaterial({ color: 0x06B6D4, wireframe: true });
+        const truck = new THREE.Mesh(truckGeometry, material);
+        scene.add(truck);
+
+        camera.position.z = 15;
+
+        function animateTruck() {
+            requestAnimationFrame(animateTruck);
+            truck.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animateTruck();
+
+        // Emission Counter
+        let counter = 0;
+        const counterElement = document.getElementById('counter');
+        setInterval(() => {
+            counter += 50;
+            counterElement.textContent = counter.toLocaleString();
+        }, 2000);
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.querySelector('.progress-bar').style.width = scrollPercent + '%';
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('.nav-menu a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Case Study Toggle
+        document.querySelectorAll('.case-study-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+            });
+        });
+
+        // Testimonials Slider
+        const sliderContainer = document.querySelector('.slider-container');
+        const sliderDots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+
+        sliderDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                sliderDots.forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+            });
+        });
+
+        // Route Map Animation
+        const routeCanvas = document.getElementById('route-canvas');
+        const routeCtx = routeCanvas.getContext('2d');
+        routeCanvas.width = routeCanvas.offsetWidth;
+        routeCanvas.height = routeCanvas.offsetHeight;
+        let truckPos = 0;
+
+        function animateRoute() {
+            routeCtx.fillStyle = 'white';
+            routeCtx.fillRect(0, 0, routeCanvas.width, routeCanvas.height);
+
+            // Draw route
+            routeCtx.strokeStyle = '#6B7280';
+            routeCtx.lineWidth = 4;
+            routeCtx.beginPath();
+            routeCtx.moveTo(50, routeCanvas.height - 50);
+            routeCtx.lineTo(routeCanvas.width - 50, 50);
+            routeCtx.stroke();
+
+            // Draw truck
+            routeCtx.fillStyle = '#F59E0B';
+            routeCtx.fillRect(50 + truckPos, routeCanvas.height - 70 - (truckPos / 10), 20, 10);
+
+            // Emission hotspot
+            routeCtx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            routeCtx.beginPath();
+            routeCtx.arc(routeCanvas.width / 2, routeCanvas.height / 2, 10, 0, Math.PI * 2);
+            routeCtx.fill();
+
+            truckPos = (truckPos + 2) % (routeCanvas.width - 100);
+            requestAnimationFrame(animateRoute);
+        }
+        animateRoute();
+
+        // Dashboard Preview
+        const dashboardCanvas = document.getElementById('dashboardCanvas');
+        const dashboardCtx = dashboardCanvas.getContext('2d');
+        let frame = 0;
+
+        function animateDashboard() {
+            dashboardCtx.fillStyle = 'white';
+            dashboardCtx.fillRect(0, 0, dashboardCanvas.width, dashboardCanvas.height);
+
+            const points = [
+                { x: 50, y: 250 - Math.sin(frame / 25) * 50 },
+                { x: 150, y: 250 - Math.sin((frame + 10) / 20) * 60 },
+                { x: 250, y: 250 - Math.sin((frame + 20) / 20) * 30 },
+                { x: 350, y: 250 - Math.sin((frame + 30) / 20) * 70 },
+                { x: 450, y: 250 - Math.sin((frame + 40) / 20) * 50 }
+            ];
+
+            // Draw axes
+            dashboardCtx.strokeStyle = '#6B7280';
+            dashboardCtx.lineWidth = 2;
+            dashboardCtx.beginPath();
+            dashboardCtx.moveTo(40, 50);
+            dashboardCtx.lineTo(40, 250);
+            dashboardCtx.lineTo(550, 250);
+            dashboardCtx.stroke();
+
+            // Draw line
+            dashboardCtx.strokeStyle = '#F59E0B';
+            dashboardCtx.lineWidth = 3;
+            dashboardCtx.beginPath();
+            dashboardCtx.moveTo(points[0].x, points[0].y);
+            points.forEach(p => dashboardCtx.lineTo(p.x, p.y));
+            dashboardCtx.stroke();
+
+            // Labels
+            dashboardCtx.fillStyle = '#0F172A';
+            dashboardCtx.font = '14px Space Grotesk';
+            dashboardCtx.textAlign = 'center';
+            dashboardCtx.fillText('CO₂ (tons)', 100, 280);
+            dashboardCtx.fillText('Fuel (L)', 300, 280);
+            dashboardCtx.fillText('Distance (km)', 500, 280);
+
+            frame++;
+            requestAnimationFrame(animateDashboard);
+        }
+        animateDashboard();
+    </script>
+</body>
+</html>

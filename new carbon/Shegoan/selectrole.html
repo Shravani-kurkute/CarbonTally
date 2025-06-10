@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('s4.jpg') no-repeat center center/cover;
+        }
+        .role-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 3px 3px 3px rgb(0, 0, 0);
+            color: white;
+        }
+        .role-container h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .role-container p {
+            margin-bottom: 20px;
+        }
+        .role-container select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+        }
+        .role-container select option {
+            background: black;
+            color: white;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 20px;
+            background: #ffb6b9;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="role-container">
+        <h1>Select Your Role</h1>
+        <p>Please choose your role to continue</p>
+        <select>
+            <option value="researcher">Researcher/Scientist</option>
+            <option value="industry">Industry Representative</option>
+            <option value="activist">Environmental Activist/Policy Maker</option>
+        </select>
+        <a href="homepage.html"> <button class="btn">Register</button></a>
+    </div>
+</body>
+</html>

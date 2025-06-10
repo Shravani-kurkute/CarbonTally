@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore CarbonTally's real-time emission monitoring solutions for the manufacturing industry. Track CO₂, NOx, PM, and energy usage to ensure compliance and enhance ESG reporting.">
+    <title>Manufacturing Industry Emission Monitoring | CarbonTally</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+    <style>
+        @font-face {
+            font-family: 'Jersey 25';
+            src: url('fonts/jersey-25.woff2') format('woff2'),
+                 url('fonts/jersey-25.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --font-family-jersey-25: 'Jersey 25', sans-serif;
+            --primary-color: #1B5E20;
+            --secondary-color: #81C784;
+            --background-color: #E8F5E9;
+            --text-color: #fff;
+            --neon-glow: #00ffcc;
+            --dark-bg: #0a0a0a;
+            --secondary-neon: #00ccff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            height: 108px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background-color: transparent;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            width: 250px;
+            height: 100px;
+            background-image: url('logo.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-radius: 4px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), #B2DFDB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            max-width: 80%;
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero-subtext {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            max-width: 80%;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sections */
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            color: var(--neon-glow);
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px var(--neon-glow);
+            font-family: var(--font-family-jersey-25);
+        }
+
+        .intro p, .how-it-helps p {
+            font-size: 1.2rem;
+            color: var(--background-color);
+            margin-bottom: 1rem;
+        }
+
+        .how-it-helps ul {
+            list-style: none;
+            margin-left: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .how-it-helps ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--background-color);
+        }
+
+        .how-it-helps ul li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+        }
+
+        /* Sub-Industry Cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            justify-items: center;
+        }
+
+        .card-hover {
+            border-radius: 20px;
+            width: 250px;
+            height: 350px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 32px -10px rgba(76, 175, 80, 0.8);
+            transition: transform 0.3s ease;
+            background-color: rgba(10, 10, 10, 0.8);
+        }
+
+        .card-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px -5px var(--neon-glow);
+        }
+
+        .card-hover img {
+            width: 100%;
+            height: 70%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .card-hover__content {
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(transparent, rgba(0, 255, 204, 0.2));
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            color: var(--text-color);
+        }
+
+        .card-hover__title {
+            font-size: 1.2rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-hover__text {
+            font-size: 0.9rem;
+            color: var(--background-color);
+        }
+
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background-color: var(--background-color);
+            padding: 3rem;
+            border-radius: 20px;
+            margin: 2rem auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .dashboard-preview canvas {
+            max-width: 100%;
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .dashboard-preview p {
+            font-size: 1rem;
+            color: var(--primary-color);
+            margin-top: 1rem;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1c2526 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 204, 0.1) 0%, transparent 70%);
+            z-index: 1;
+            animation: pulse 6s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+
+        .cta h2 {
+            font-size: 3rem;
+            color: var(--neon-glow);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .cta a {
+            display: inline-block;
+            margin: 1rem;
+            padding: 15px 25px;
+            background: linear-gradient(45deg, var(--neon-glow), var(--secondary-neon));
+            color: #000;
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px var(--neon-glow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--neon-glow);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .footer a {
+            color: var(--background-color);
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+
+        .footer a:hover {
+            color: var(--neon-glow);
+        }
+
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtext {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cta a {
+                display: block;
+                margin: 1rem auto;
+                width: 80%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"></div>
+        <div class="navbar-right">
+            <span class="icon material-symbols-outlined">person</span>
+            <span class="icon material-symbols-outlined">notifications</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="manufacturing_background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-content">
+            <div class="hero-text">Transform Manufacturing with Real-Time Emission Monitoring</div>
+            <div class="hero-subtext">CarbonTally empowers manufacturers to track CO₂, NOx, PM, and energy usage, ensuring compliance and sustainability.</div>
+        </div>
+    </section>
+
+    <section id="intro" class="section intro">
+        <h2 class="section-title">Why Manufacturing Needs Emission Monitoring</h2>
+        <p>Manufacturing accounts for nearly 30% of global CO₂ emissions, making it a critical sector for climate action. From heavy machinery to internal logistics and process heat, emissions like CO₂, nitrogen oxides (NOx), particulate matter (PM), and volatile organic compounds (VOCs) are generated at every production stage. These pollutants harm air quality, public health, and contribute to global warming.</p>
+        <p>In India, the Central Pollution Control Board (CPCB) mandates Continuous Emission Monitoring Systems (CEMS) for 17 highly polluting industries, including automotive, textiles, and food processing. Globally, companies like Tata Motors, Nestlé, Arvind Mills, Britannia, and Dixon Tech face pressure from regulators, investors, and consumers to reduce their carbon footprint. Environmental, Social, and Governance (ESG) reporting frameworks, such as GRI and BRSR, further demand transparent emission data to attract sustainability-focused investments.</p>
+        <p>CarbonTally’s real-time monitoring solutions help manufacturers comply with regulations, optimize energy usage, reduce costs, and enhance their reputation as sustainable leaders.</p>
+    </section>
+
+    <section id="how-it-helps" class="section how-it-helps">
+        <h2 class="section-title">How CarbonTally Helps</h2>
+        <p>Our cutting-edge platform integrates IoT sensors, AI-driven analytics, and intuitive dashboards to provide manufacturers with actionable insights. Here’s how we support your operations:</p>
+        <ul>
+            <li>Monitor emissions from machines, boilers, and furnaces in real-time, tracking CO₂, NOx, PM, SO₂, and VOCs with precision.</li>
+            <li>Optimize energy consumption across production lines to lower costs and emissions.</li>
+            <li>Ensure compliance with CPCB, EPA, and global regulations through automated data logging.</li>
+            <li>Generate ESG reports for Scope 1, 2, and 3 emissions, aligning with GRI, TCFD, and BRSR standards.</li>
+            <li>Enable predictive maintenance to prevent emission spikes and extend equipment life.</li>
+            <li>Customize solutions for your specific processes, from automotive to electronics manufacturing.</li>
+        </ul>
+        <p>With CarbonTally, you gain a competitive edge by demonstrating environmental responsibility and achieving sustainability goals.</p>
+    </section>
+
+    <section id="sub-industries" class="section sub-industries">
+        <h2 class="section-title">Sub-Industries We Serve</h2>
+        <p>CarbonTally addresses the unique emission challenges of various manufacturing sub-industries. Explore our tailored solutions:</p>
+        <div class="cards-container">
+            <div class="card-hover">
+                <img src="automotive.jpg" alt="Automotive Manufacturing">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Automotive Manufacturing</h3>
+                    <p class="card-hover__text">Track VOCs, CO₂, and PM from welding and painting for companies like Tata Motors.</p>
+                </div>
+            </div>
+            <div class="card-hover">
+                <img src="textile.jpg" alt="Textile & Apparel">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Textile & Apparel</h3>
+                    <p class="card-hover__text">Monitor NOx and SO₂ from dyeing processes, supporting firms like Arvind Mills.</p>
+                </div>
+            </div>
+            <div class="card-hover">
+                <img src="food_beverage.jpg" alt="Food & Beverage">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Food & Beverage</h3>
+                    <p class="card-hover__text">Ensure compliance for ovens and boilers at companies like Britannia and Nestlé.</p>
+                </div>
+            </div>
+            <div class="card-hover">
+                <img src="electronics.jpg" alt="Electronics">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Electronics</h3>
+                    <p class="card-hover__text">Minimize VOCs from soldering for manufacturers like Dixon Tech.</p>
+                </div>
+            </div>
+            <div class="card-hover">
+                <img src="machinery.jpg" alt="Heavy Machinery">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Heavy Machinery</h3>
+                    <p class="card-hover__text">Reduce CO₂ and NOx from forging and casting processes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="section dashboard-preview">
+        <h2 class="section-title" style="color: var(--primary-color);">Live Dashboard Preview</h2>
+        <p>Visualize your manufacturing emissions data with CarbonTally’s real-time dashboard, featuring customizable widgets, trend analysis, and automated alerts.</p>
+        <canvas id="dashboardCanvas" width="600" height="200"></canvas>
+        <p>Experience seamless monitoring of CO₂, PM, and energy metrics to stay compliant and optimize operations.</p>
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Start Your Sustainability Journey</h2>
+        <p>Transform your manufacturing operations with CarbonTally’s real-time emission monitoring. Book a demo or download our use case study today.</p>
+        <a href="https://carbon-tally.com/book-demo">Book a Plant Demo</a>
+        <a href="/assets/use_case_manufacturing.pdf" download>Download Use Case (PDF)</a>
+    </section>
+
+    <footer class="footer">
+        <p>Contact Us: <a href="mailto:info@carbontally.com">info@carbontally.com</a> | +91-123-456-7890</p>
+        <p><a href="https://linkedin.com/company/carbontally">LinkedIn</a> | <a href="https://github.com/carbontally">GitHub</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a></p>
+        <p>© 2025 CarbonTally. All rights reserved.</p>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Dashboard Preview Simulation
+            const canvas = document.getElementById('dashboardCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#1b5e20';
+            ctx.font = '20px Jersey 25';
+            ctx.fillText('CO₂: 680 ppm', 20, 50);
+            ctx.fillText('PM2.5: 55 µg/m³', 20, 100);
+            ctx.fillText('Energy: 120 kWh', 20, 150);
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(300, 150);
+            ctx.lineTo(450, 60);
+            ctx.stroke();
+        });
+    </script>
+</body>
+</html>

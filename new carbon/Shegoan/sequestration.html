@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Sequestration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('16.avif') no-repeat center center/cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            color: #2c3e50; /* Dark Blue-Gray Text */
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #1a3c30; /* Dark Green */
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #1a3c30; /* Dark Green */
+            text-align: left;
+            display: block;
+        }
+
+        input, select, textarea {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #1a3c30;
+            border-radius: 10px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.8);
+            color: #1a3c30; /* Dark Green Text */
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(26, 60, 48, 0.7); /* Muted Dark Green */
+        }
+
+        button {
+            padding: 12px;
+            background-color: #1a3c30; /* Dark Green */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #145c46; /* Slightly Brighter Green */
+        }
+
+        .back-button {
+            margin-top: 10px;
+            background-color: #ff6666; /* Light Red */
+        }
+
+        .back-button:hover {
+            background-color: #ff4d4d; /* Slightly Darker Red */
+        }
+
+        .results {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #1a3c30;
+        }
+
+        .results p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Carbon Sequestration Rate</h1>
+        <form id="carbonForm">
+            <label for="siteName">Name of Mining Site:</label>
+            <input type="text" id="siteName" placeholder="Enter site name" required>
+
+            <label for="vegetationType">Vegetation Type:</label>
+            <input type="text" id="vegetationType" placeholder="Enter vegetation type" required>
+
+            <label for="areaCovered">Area Covered (hectares):</label>
+            <input type="number" id="areaCovered" placeholder="Enter area size" step="0.01" required>
+
+            <label for="sequestrationRate">Carbon Sequestration Rate (tons CO2/hectare/year):</label>
+            <input type="number" id="sequestrationRate" placeholder="Enter sequestration rate" step="0.01" required>
+
+            <label for="additionalDetails">Additional Details:</label>
+            <textarea id="additionalDetails" placeholder="Enter additional details"></textarea>
+
+            <button type="button" onclick="calculateCarbonSequestration()">Calculate</button>
+            <button class="back-button" onclick="goBack()">Back</button>
+        </form>
+
+        <div id="results" class="results">
+            <p>Daily Sequestration Rate: <span id="dailySequestrationRate">0</span> kg</p>
+            <p>Total Sequestration: <span id="totalSequestration">0</span> kg</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateCarbonSequestration() {
+            const areaCovered = parseFloat(document.getElementById('areaCovered').value);
+            const sequestrationRate = parseFloat(document.getElementById('sequestrationRate').value);
+
+            const dailySequestrationRate = (sequestrationRate * areaCovered * 1000) / 365;
+            const totalSequestration = dailySequestrationRate * 365;
+
+            localStorage.setItem('carbonSequestration', totalSequestration);
+
+            document.getElementById('dailySequestrationRate').textContent = dailySequestrationRate.toFixed(2);
+            document.getElementById('totalSequestration').textContent = totalSequestration.toFixed(2);
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function goBack() {
+            window.location.href = 'mainPage.html';
+        }
+    </script>
+</body>
+</html>

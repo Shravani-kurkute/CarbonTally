@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Emissions</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('11.jpg') no-repeat center center/cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Glassmorphism Effect */
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
+        /* Title */
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: #4CAF50;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 16px;
+            margin: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .back-button {
+            background-color: #ff6666;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        /* Results Box */
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            text-align: left;
+        }
+
+        .results p {
+            font-size: 16px;
+            margin: 5px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shipping Emissions</h1>
+        <form id="shippingForm">
+            <div class="form-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="distanceUnit">Distance Unit:</label>
+                <select id="distanceUnit">
+                    <option value="km">Kilometers (km)</option>
+                    <option value="miles">Miles</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="distanceValue">Distance:</label>
+                <input type="number" id="distanceValue" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="transportMethod">Transport Method:</label>
+                <select id="transportMethod">
+                    <option value="truck">Truck</option>
+                    <option value="ship">Ship</option>
+                </select>
+            </div>
+
+            <button type="button" onclick="calculateShippingEmissions()">Calculate</button>
+            <button class="back-button" type="button" onclick="goBack()">Back</button>
+        </form>
+
+        <div id="results" class="results" style="display: none;">
+            <p>Distance Entered: <span id="distanceEntered">0</span> km</p>
+            <p>Weight Entered: <span id="weightEntered">0</span> kg</p>
+            <p>Carbon Emissions (grams): <span id="carbonEmissionsGrams">0</span> g</p>
+            <p>Carbon Emissions (kilograms): <span id="carbonEmissionsKg">0</span> kg</p>
+            <p>Carbon Emissions (metric tons): <span id="carbonEmissionsTons">0</span> t</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateShippingEmissions() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const distanceValue = parseFloat(document.getElementById('distanceValue').value);
+            const distanceUnit = document.getElementById('distanceUnit').value;
+            const transportMethod = document.getElementById('transportMethod').value;
+
+            // Example emission factors (use actual factors for accuracy)
+            const emissionFactor = (transportMethod === 'truck') ? 0.15 : 0.10; // kg CO2 per kg per km
+            const distanceInKm = (distanceUnit === 'miles') ? distanceValue * 1.60934 : distanceValue; // convert miles to km
+            const carbonEmissions = weight * distanceInKm * emissionFactor; // kg CO2
+
+            // Store results in localStorage
+            localStorage.setItem('shippingEmissions', carbonEmissions);
+
+            // Display results
+            document.getElementById('distanceEntered').textContent = distanceValue.toFixed(2);
+            document.getElementById('weightEntered').textContent = weight.toFixed(2);
+            document.getElementById('carbonEmissionsGrams').textContent = (carbonEmissions * 1000).toFixed(2);
+            document.getElementById('carbonEmissionsKg').textContent = carbonEmissions.toFixed(2);
+            document.getElementById('carbonEmissionsTons').textContent = (carbonEmissions / 1000).toFixed(2);
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function goBack() {
+            window.location.href = 'mainPage.html'; // Replace with your actual main page file
+        }
+    </script>
+</body>
+</html>

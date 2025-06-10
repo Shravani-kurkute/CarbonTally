@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Monitor emissions like SO₂, NOx, VOCs, and PM in chemical and pharmaceutical industries with CarbonTally’s IoT sensors. Ensure GPCB and CPCB compliance with real-time dashboards.">
+    <title>Chemical & Pharmaceutical Emission Monitoring | CarbonTally</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;0;1,300;1,400;1,500;1,700;1,900&family=Space+Roboto:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+    <style>
+        :root {
+            --font-family-jersey-25: 'Roboto', sans-serif;
+            --primary-color: #8B008B; /* Magenta for chemical emissions */
+            --secondary-color: #1E40AF; /* Deep blue for labs */
+            --accent-color: #4A5568; /* Slate gray for equipment */
+            --neon-glow: #00CED1; /* Dark cyan for tech */
+            --background-color: #0F172A; /* Dark slate */
+            --background-secondary: #1E293B; /* Darker slate */
+            --text-color: #F1F5F9; /* Light gray */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--background-color) 0%, var(--background-secondary) 100%);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: linear-gradient(to right, var(--background-color), var(--primary-color));
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            width: 160px;
+            height: 40px;
+            background-color: var(--neon-glow);
+            text-align: center;
+            line-height: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--background-color);
+            filter: brightness(1.2) drop-shadow(0 0 5px var(--neon-glow));
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--neon-glow);
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: scale(1.1);
+            color: var(--neon-glow);
+        }
+
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.4;
+            filter: brightness(0.6);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(139, 0, 139, 0.4), rgba(30, 64, 175, 0.3));
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            font-family: var(--font-family-jersey-25);
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--neon-glow);
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero-subtext {
+            font-size: 1.4rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            max-width: 80%;
+            margin: 0 auto 2rem;
+        }
+
+        .emission-counter {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-top: 1rem;
+            text-shadow: 0 0 5px var(--neon-glow);
+        }
+
+        #three-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: sparkPulse 3s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes sparkPulse {
+            0% { opacity: 0; transform: translate(0, 0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translate(5px, 10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(31, 41, 55, 0.7);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--accent-color);
+            position: relative;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 0 0 8px var(--neon-glow);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro p, .how-it-helps p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .how-it-helps ul {
+            list-style: none;
+            margin-left: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .how-it-helps ul li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .how-it-helps ul li::before {
+            content: '🧪';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .card-hover {
+            border-radius: 12px;
+            width: 100%;
+            max-width: 280px;
+            height: 360px;
+            position: relative;
+            overflow: hidden;
+            background: var(--background-secondary);
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-glow);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 1rem auto;
+            display: block;
+            text-align: center;
+        }
+
+        .card-hover img {
+            width: 100%;
+            height: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .card-hover__content {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            background: linear-gradient(transparent, var(--background-secondary));
+        }
+
+        .card-hover__title {
+            font-size: 1.3rem;
+            color: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-hover__text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .card-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .card-button:hover::before {
+            left: 0;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .tooltip {
+            visibility: hidden;
+            background: var(--background-color);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            z-index: 10;
+            border: 1px solid var(--neon-glow);
+        }
+
+        .card-hover:hover .tooltip {
+            visibility: visible;
+        }
+
+        #vocs-canvas {
+            width: 100%;
+            height: 400px;
+            background: var(--background-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--accent-color);
+            display: block;
+            margin: 2rem auto;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, var(--background-color), var(--background-secondary));
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            margin: 2rem auto;
+            max-width: 1200px;
+            border: 1px solid var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            color: var(--neon-glow);
+            margin-bottom: 2rem;
+            font-family: var(--font-family-jersey-25);
+            text-shadow: 2px 2px 8px var(--neon-glow);
+        }
+
+        .cta a {
+            display: inline-block;
+            margin: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--neon-glow));
+            color: var(--background-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .cta a:hover::before {
+            left: 0;
+        }
+
+        .cta a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .footer {
+            background: var(--background-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--accent-color);
+        }
+
+        .footer p {
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--neon-glow);
+        }
+
+        .newsletter {
+            margin: 2rem 0;
+        }
+
+        .newsletter input {
+            padding: 0.75rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background: var(--background-secondary);
+            color: var(--text-color);
+            width: 200px;
+            margin-right: 0.5rem;
+        }
+
+        .newsletter button {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            background: var(--neon-glow);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--primary-color);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtext, .emission-counter {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                width: auto;
+                margin: 0.5rem auto;
+            }
+
+            .cta a {
+                display: block;
+                margin: 1rem auto;
+                width: 90%;
+            }
+
+            .newsletter input {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            #vocs-canvas {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    <header class="header">
+        <div class="logo">CarbonTally</div>
+        <nav class="nav-menu">
+            <a href="#home" aria-label="Home">Home</a>
+            <a href="#solutions" aria-label="Solutions">Solutions</a>
+            <a href="#about" aria-label="About">About</a>
+            <a href="#contact" aria-label="Contact">Contact</a>
+        </nav>
+        <div class="navbar-right">
+            <span class="icon material-symbols-outlined" aria-label="User Profile">person</span>
+            <span class="icon material-symbols-outlined" aria-label="Notifications">notifications</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="#" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay"></div>
+        <canvas id="three-canvas"></canvas>
+        <div class="particles">
+            <div class="particle" style="top: 20%; left: 30%; animation-delay: 0s;"></div>
+            <div class="particle" style="top: 50%; left: 70%; animation-delay: 0.5s;"></div>
+            <div class="particle" style="top: 80%; left: 20%; animation-delay: 1s;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-text">CarbonTally for Chemical & Pharmaceutical</h1>
+            <p class="hero-subtext">Monitor emissions with precision for compliance and sustainability.</p>
+            <p class="emission-counter">Emissions Reduced: <span id="counter">0</span> tons CO₂e</p>
+        </div>
+    </section>
+
+    <section id="intro" class="section intro">
+        <h2 class="section-title">Invisible Gases, Real Impact</h2>
+        <p>Chemical plants and pharmaceutical factories release emissions from boilers, chemical reactions, and air handling systems. Gases like SO₂, NOx, VOCs, and NH₃ are hazardous and tightly regulated.</p>
+        <p>In India, chemical industries contribute significantly to air pollution, with VOC emissions from solvents and processes impacting urban air quality. Non-compliance with GPCB and CPCB can lead to hefty fines.</p>
+        <p>CarbonTally’s IoT platform provides real-time monitoring to ensure compliance and reduce environmental impact.</p>
+    </section>
+
+    <section id="how-it-helps" class="section how-it-helps">
+        <h2 class="section-title">How CarbonTally Empowers You</h2>
+        <p>Our platform delivers advanced emission monitoring for chemical and pharmaceutical operations:</p>
+        <ul>
+            <li>Sensors for SO₂, NOx, VOCs, NH₃, and particulate matter (PM).</li>
+            <li>Track emissions per batch or per chemical process.</li>
+            <li>Real-time alerts for regulatory thresholds (GPCB, CPCB compliance).</li>
+            <li>Integrate with existing air handling and boiler systems.</li>
+            <li>Generate detailed reports for environmental audits.</li>
+            <li>Optimize processes to reduce emission intensity.</li>
+        </ul>
+        <p>Stay compliant and sustainable with CarbonTally’s data-driven solutions.</p>
+    </section>
+
+    <section id="sub-industries" class="section sub-industries">
+        <h2 class="section-title">Our Chemical & Pharmaceutical Solutions</h2>
+        <p>CarbonTally addresses emission challenges across sectors:</p>
+        <div class="cards-container">
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">medication</span>
+                <img src="https://images.unsplash.com/photo-1554475901-4538ddfbccc2" alt="Pharma Manufacturing">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Pharma Manufacturing</h3>
+                    <p class="card-hover__text">Monitor VOCs and PM (e.g., Cipla).</p>
+                    <a href="#pharma" class="card-button" aria-label="Learn more about Pharma Manufacturing">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 80 tons CO₂e/plant</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">agriculture</span>
+                <img src="https://images.unsplash.com/photo-1588776813677-77d04ae4c32a" alt="Agrochemicals & Fertilizers">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Agrochemicals & Fertilizers</h3>
+                    <p class="card-hover__text">Track NH₃ emissions (e.g., IFFCO).</p>
+                    <a href="#agrochemicals" class="card-button" aria-label="Learn more about Agrochemicals and Fertilizers">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 150 tons CO₂e/plant</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">format_paint</span>
+                <img src="https://images.unsplash.com/photo-1532187863604-0761a49d19ab" alt="Paints, Solvents, Coatings">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Paints, Solvents, Coatings</h3>
+                    <p class="card-hover__text">Control VOC emissions.</p>
+                    <a href="#paints" class="card-button" aria-label="Learn more about Paints, Solvents, Coatings">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 60 tons CO₂e/unit</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">recycling</span>
+                <img src="https://images.unsplash.com/photo-1581093450021-1a28b59c5f69" alt="Plastic & Resin Processing">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Plastic & Resin Processing</h3>
+                    <p class="card-hover__text">Monitor process emissions.</p>
+                    <a href="#plastics" class="card-button" aria-label="Learn more about Plastic & Resin Processing">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 100 tons CO₂e/plant</span>
+                </div>
+            </div>
+            <div class="card-hover">
+                <span class="card-icon material-symbols-outlined">oil_barrel</span>
+                <img src="https://images.unsplash.com/photo-1519167758481-83f288e2762e" alt="Petrochemicals & Refineries">
+                <div class="card-hover__content">
+                    <h3 class="card-hover__title">Petrochemicals & Refineries</h3>
+                    <p class="card-hover__text">Track SO₂ and NOx emissions.</p>
+                    <a href="#petrochemicals" class="card-button" aria-label="Learn more about Petrochemicals & Refineries">Learn More</a>
+                    <span class="tooltip">Avg. emissions: 500 tons CO₂e/refinery</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="vocs-flow" class="section vocs-flow" >
+        <h2 class="section-title">Visualize VOC Emissions</h2>
+        <p>Interactive diagrams show volatile organic compound emissions from chemical processes.</p>
+        <canvas id="vocs-canvas"></canvas>
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Ensure Compliance with CarbonTally</h2>
+        <p>Join leading chemical and pharmaceutical firms in achieving sustainability and regulatory goals.</p>
+        <a href="https://carbon-tally.com/book-onsite-evaluation" target="_blank" aria-label="Book Onsite Evaluation">Book Onsite Evaluation</a>
+        <a href="#" download aria-label="Download Chemical Compliance Checklist">Download Compliance Checklist</a>
+    </section>
+
+    <footer class="footer">
+        <div class="newsletter">
+            <h3>Stay Updated with CarbonTally</h3>
+            <input type="email" id="newsletterEmail" placeholder="Enter your email" aria-label="Email for newsletter">
+            <button type="submit">Submit</button>
+        </div>
+        <p>Contact Us: <a href="mailto:info@carbontally.com">info@carbontally.com</a> | +91-1234-567890</p>
+        <p><a href="https://linkedin.com/company/cambontally">LinkedIn</a> | <a href="https://github.com/cambontally">GitHub</a> | <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms</a></p>
+        <p>© 2025 CarbonTally. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Three.js Molecule Visualization
+        (function() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+            if (!renderer.domElement) {
+                console.error('Three.js canvas not found');
+                return;
+            }
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const moleculeGeometry = new THREE.SphereGeometry(1, 32, 16);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00CED1, wireframe: true });
+            const molecule = new THREE.Mesh(moleculeGeometry, material);
+            scene.add(molecule);
+
+            camera.position.z = 5;
+
+            function animateMolecule() {
+                molecule.rotation.x += 0.01;
+                molecule.rotation.y += 0.01;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateMolecule);
+            }
+
+            function handleResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            window.addEventListener('resize', handleResize);
+            console.log('Three.js molecule initialized');
+            animateMolecule();
+        })();
+
+        // Emission Counter
+        (function() {
+            let counter = 0;
+            const counterElement = document.getElementById('counter');
+            if (!counterElement) {
+                console.error('Emission counter element not found');
+                return;
+            }
+            setInterval(() => {
+                counter += 5;
+                counterElement.textContent = counter.toLocaleString();
+            }, 250);
+        })();
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.querySelector('.progress-bar').style.width = (scrollTop / docHeight) * 100 + '%';
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('.nav-menu a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // VOCs Particle Visualization
+        (function() {
+            const canvas = document.getElementById('vocs-canvas');
+            if (!canvas) {
+                console.error('VOCs canvas not found');
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('VOCs context not found');
+                return;
+            }
+
+            let canvasWidth = canvas.offsetWidth;
+            let canvasHeight = 400;
+
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            console.log('VOCs canvas initialized:', canvasWidth, canvasHeight);
+
+            function handleResize() {
+                canvasWidth = canvas.offsetWidth;
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+            }
+
+            window.addEventListener('resize', handleResize);
+
+            let particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * canvasWidth,
+                    y: Math.random() * canvasHeight,
+                    radius: Math.random() * 5 + 2,
+                    speedX: (Math.random() - 0.5) * 2,
+                    speedY: (Math.random() - 0.5) * 2
+                });
+            }
+
+            function animateVOCs() {
+                ctx.fillStyle = '#1E293B';
+                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+                ctx.fillStyle = 'rgba(139, 0, 139, 0.6)';
+                particles.forEach(p => {
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < 0 || p.x > canvasWidth) p.speedX *= -1;
+                    if (p.y < 0 || p.y > canvasHeight) p.speedY *= -1;
+                });
+
+                requestAnimationFrame(animateVOCs);
+            }
+
+            animateVOCs();
+        })();
+    </script>
+</body>
+</html>

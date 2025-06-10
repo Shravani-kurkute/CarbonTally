@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel Combustion Emissions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        /* Body Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('9.jpg') no-repeat center center/cover;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Container */
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Title */
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Labels */
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 0 5px;
+            text-align: left;
+            color: #333;
+        }
+
+        /* Input Fields */
+        select, input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #aaa;
+            outline: none;
+            transition: 0.3s ease-in-out;
+            background: rgba(255, 255, 255, 0.5);
+            color: #333;
+        }
+
+        select:focus, input:focus {
+            border-color: #42a5f5;
+            box-shadow: 0 0 5px rgba(66, 165, 245, 0.5);
+        }
+
+        /* Button Styling */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .calculate {
+            background: #4caf50;
+            color: white;
+        }
+
+        .back {
+            background: #ff6666;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        /* Glassmorphism Results Section */
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            text-align: left;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .results p {
+            font-size: 16px;
+            margin: 8px 0;
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Fuel Combustion Emissions</h1>
+        <form id="fuelForm">
+            <label for="fuelType">Fuel Type:</label>
+            <select id="fuelType">
+                <option value="diesel">Diesel</option>
+                <option value="gasoline">Gasoline</option>
+            </select>
+
+            <label for="fuelVolume">Volume of Fuel Consumed (Litres):</label>
+            <input type="number" id="fuelVolume" step="0.01" placeholder="Enter litres..." required>
+
+            <div class="button-container">
+                <button type="button" class="calculate" onclick="calculateFuelCombustion()">Calculate</button>
+                <button type="button" class="back" onclick="goBack()">Back</button>
+            </div>
+        </form>
+
+        <div id="results" class="results">
+            <p>CO2 Emissions: <span id="co2Emissions">0</span> kg</p>
+            <p>Nitrous Oxide Emissions: <span id="noxEmissions">0</span> kg</p>
+            <p>Methane Emissions: <span id="methaneEmissions">0</span> kg</p>
+            <p>Total Direct CO2 Emissions: <span id="totalDirectCO2">0</span> kg</p>
+            <p>Indirect CO2 Emissions: <span id="indirectCO2">0</span> kg</p>
+            <p>Life Cycle CO2 Emissions: <span id="lifeCycleCO2">0</span> kg</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateFuelCombustion() {
+            const fuelType = document.getElementById('fuelType').value;
+            const fuelVolume = parseFloat(document.getElementById('fuelVolume').value);
+
+            if (isNaN(fuelVolume) || fuelVolume <= 0) {
+                alert("Please enter a valid fuel volume.");
+                return;
+            }
+
+            // Emission calculations
+            const co2Emissions = fuelVolume * (fuelType === 'diesel' ? 2.68 : 2.31); 
+            const noxEmissions = co2Emissions * 0.05;
+            const methaneEmissions = co2Emissions * 0.01;
+            const totalDirectCO2 = co2Emissions;
+            const indirectCO2 = co2Emissions * 0.10;
+            const lifeCycleCO2 = co2Emissions + indirectCO2;
+
+            // Display results
+            document.getElementById('co2Emissions').textContent = co2Emissions.toFixed(2);
+            document.getElementById('noxEmissions').textContent = noxEmissions.toFixed(2);
+            document.getElementById('methaneEmissions').textContent = methaneEmissions.toFixed(2);
+            document.getElementById('totalDirectCO2').textContent = totalDirectCO2.toFixed(2);
+            document.getElementById('indirectCO2').textContent = indirectCO2.toFixed(2);
+            document.getElementById('lifeCycleCO2').textContent = lifeCycleCO2.toFixed(2);
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+</body>
+</html>

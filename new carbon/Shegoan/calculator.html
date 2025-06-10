@@ -1,0 +1,121 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Tracker</title>
+    <style>
+        body {
+            background: url('17.jpg') no-repeat center center/cover;
+        }
+
+        h1 {
+            margin-left: 35%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background-color: rgba(215, 255, 221, 0.5); /* Transparent effect */
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 3rem;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hover Effect: Slight upward movement and shadow increase */
+        .card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .last-row {
+            grid-column: 2 / 3;
+        }
+
+        /* Back button styling */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: rgba(215, 255, 221, 0.5);
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            color: #000;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button:hover {
+            background-color: rgba(192, 236, 198, 0.5);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Button -->
+    <a href="#" class="back-button">← Back</a>
+
+    <div class="container">
+        <h1>Carbon Footprint Tracker</h1> 
+        
+        <div class="grid">
+            <div class="card" onclick="window.location.href='sequestration.html'">
+                <h2>Carbon Sequestration Rate</h2>
+                <p>Click to calculate carbon sequestration based on vegetation area.</p>
+            </div>
+
+            <div class="card" onclick="window.location.href='fuel-combustion.html'">
+                <h2>Fuel Combustion Emissions</h2>
+                <p>Click to calculate emissions from fuel combustion.</p>
+            </div>
+
+            <div class="card" onclick="window.location.href='shipping-emissions.html'">
+                <h2>Shipping Emissions</h2>
+                <p>Click to calculate emissions from shipping based on weight and distance.</p>
+            </div>
+
+            <div class="card" onclick="window.location.href='electricity-consumption.html'">
+                <h2>Electricity Consumption</h2>
+                <p>Click to calculate emissions from electricity consumption.</p>
+            </div>
+
+            <div class="card" onclick="window.location.href='explosion-emissions.html'">
+                <h2>Explosion Emissions</h2>
+                <p>Click to calculate emissions from explosive usage.</p>
+            </div>
+
+            <div class="card" onclick="window.location.href='total-emissions.html'">
+                <h2>Total Emissions</h2>
+                <p>Click to view Total emission</p>
+            </div>
+
+            <div class="card last-row" onclick="window.location.href='data-visualization.html'">
+                <h2>Data Visualization</h2>
+                <p>View pie charts and bar graphs representing total emissions data.</p>
+            </div> 
+        </div>
+    </div>
+</body>
+</html>

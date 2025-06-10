@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emission Logger</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f7f9fc;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-12 {
+            margin-bottom: 3rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mt-8 {
+            margin-top: 2rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #1a365d;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 3.75rem;
+            }
+        }
+
+        .description {
+            font-size: 1.25rem;
+            color: #4a5568;
+            max-width: 48rem;
+            margin: 0 auto 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #48bb78;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #38a169;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f0f0f0;
+        }
+
+        .stat-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #48bb78;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #4a5568;
+            background-color: #f7fafc;
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 28rem;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.25rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .error-toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #f56565;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+            color: white;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <section class="text-center mb-12">
+            <h1>Log Data Collection</h1>
+            <p class="description">
+                Track your carbon emissions by logging your activities. Select the
+                source type, enter the relevant details, and we'll calculate the
+                environmental impact.
+            </p>
+            <button id="addLogBtn" class="btn btn-primary">
+                <i class="fas fa-plus mr-2"></i>
+                Add New Log
+            </button>
+        </section>
+
+        <section id="statsSection" class="stats-grid"></section>
+
+        <section class="table-container">
+            <div class="filters">
+                <h2 class="text-2xl font-bold text-[#1a365d]">Recent Logs</h2>
+                <div class="flex gap-4">
+                    <input type="date" id="startDate" class="form-control">
+                    <input type="date" id="endDate" class="form-control">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Source Type</th>
+                            <th>Activity</th>
+                            <th>Fuel Type</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Emissions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPage" class="btn btn-secondary">Previous</button>
+                <span id="currentPage">Page 1</span>
+                <button id="nextPage" class="btn btn-secondary">Next</button>
+            </div>
+        </section>
+
+        <div id="modal" class="modal-overlay">
+            <div class="modal">
+                <h2 class="text-2xl font-bold text-[#1a365d] mb-6">Add New Log</h2>
+                <form id="logForm">
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Source Type</label>
+                        <select name="source_type" class="form-control" required>
+                            <option value="">Select Source Type</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Activity Type</label>
+                        <select name="activity_type" class="form-control" required>
+                            <option value="">Select Activity Type</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fuel Type</label>
+                        <select name="fuel_type" class="form-control" required>
+                            <option value="">Select Fuel Type</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" name="quantity" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit</label>
+                            <select name="unit" class="form-control" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea name="notes" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mt-8 flex justify-end gap-4">
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Log</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="errorToast" class="error-toast"></div>
+        <div id="loadingOverlay" class="loading-overlay">Loading...</div>
+    </div>
+
+    <script>
+        // Configuration
+        const sourceTypes = ["Vehicle", "Building", "Equipment", "Industrial"];
+        const activityTypes = {
+            Vehicle: ["Driving", "Idling", "Maintenance"],
+            Building: ["Heating", "Cooling", "Lighting"],
+            Equipment: ["Operation", "Standby", "Maintenance"],
+            Industrial: ["Production", "Processing", "Storage"]
+        };
+        const fuelTypes = ["Diesel", "Gasoline", "Natural Gas", "Electricity"];
+        const units = ["liters", "gallons", "kWh", "cubic meters"];
+    
+        // Emission Factors (kg CO2e per unit) - Updated with more realistic values
+        const emissionFactors = {
+            Diesel: 2.68,       // kg CO2e per liter
+            Gasoline: 2.31,      // kg CO2e per liter
+            "Natural Gas": 0.20,  // kg CO2e per cubic meter
+            Electricity: 0.50    // kg CO2e per kWh (This varies greatly by region)
+        };
+    
+        // State
+        let currentPage = 1;
+        let loading = false;
+        let logsData = []; // Store the fetched logs data
+    
+        // DOM Elements
+        const modal = document.getElementById('modal');
+        const addLogBtn = document.getElementById('addLogBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const logForm = document.getElementById('logForm');
+        const errorToast = document.getElementById('errorToast');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const currentPageSpan = document.getElementById('currentPage');
+        const logsTableBody = document.getElementById('logsTableBody');
+        const statsSection = document.getElementById('statsSection');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+    
+        // Initialize date inputs
+        const today = new Date();
+        const startOfYear = new Date(today.getFullYear(), 0, 1);
+        startDateInput.value = startOfYear.toISOString().split('T')[0];
+        endDateInput.value = today.toISOString().split('T')[0];
+    
+        // Initialize form selects
+        const sourceTypeSelect = logForm.elements['source_type'];
+        const activityTypeSelect = logForm.elements['activity_type'];
+        const fuelTypeSelect = logForm.elements['fuel_type'];
+        const unitSelect = logForm.elements['unit'];
+    
+        sourceTypes.forEach(type => {
+            sourceTypeSelect.add(new Option(type, type));
+        });
+    
+        fuelTypes.forEach(type => {
+            fuelTypeSelect.add(new Option(type, type));
+        });
+    
+        units.forEach(unit => {
+            unitSelect.add(new Option(unit, unit));
+        });
+    
+        // Event Listeners
+        addLogBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+    
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            logForm.reset();
+        });
+    
+        sourceTypeSelect.addEventListener('change', (e) => {
+            const selectedSource = e.target.value;
+            activityTypeSelect.innerHTML = '<option value="">Select Activity Type</option>';
+            if (selectedSource) {
+                activityTypes[selectedSource].forEach(type => {
+                    activityTypeSelect.add(new Option(type, type));
+                });
+            }
+        });
+    
+        logForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loading = true;
+            updateLoadingState();
+    
+            try {
+                const formData = new FormData(logForm);
+                const logData = Object.fromEntries(formData);
+    
+                // Calculate emissions
+                const fuelType = logData.fuel_type;
+                const quantity = parseFloat(logData.quantity);
+                const unit = logData.unit; // Make sure you're using this
+    
+                if (!emissionFactors[fuelType]) {
+                    throw new Error(No emission factor found for fuel type: ${fuelType});
+                }
+    
+                let emissionFactor = emissionFactors[fuelType];
+    
+                // Unit Conversion (Example - Adapt to your specific needs)
+                if (unit === "gallons" && (fuelType === "Diesel" || fuelType === "Gasoline")) {
+                    emissionFactor = emissionFactor * 3.785; // Convert gallons to liters and adjust factor.
+    
+                }
+    
+                let emissions = quantity * emissionFactor; // kg CO2e
+    
+                logData.emissions = emissions;  // Store the calculated emissions
+    
+                const response = await fetch('/api/create-emission-log', {  // Changed URL to create-emission-log
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(logData)
+                });
+    
+                if (!response.ok) throw new Error(Failed to create log: ${response.status} ${response.statusText});
+    
+                const result = await response.json();
+    
+                if (result.error) throw new Error(API Error: ${result.error});
+    
+                modal.style.display = 'none';
+                logForm.reset();
+    
+              // Instead of fully refetching everything, just add the new log to the top
+              logsData.unshift(logData); // Add to the beginning of array
+              updateLogsTable(logsData);
+    
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                loading = false;
+                updateLoadingState();
+            }
+        });
+    
+        [startDateInput, endDateInput].forEach(input => {
+            input.addEventListener('change', () => {
+                currentPage = 1;
+                fetchData();
+            });
+        });
+    
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchData();
+            }
+        });
+    
+        nextPageBtn.addEventListener('click', () => {
+            currentPage++;
+            fetchData();
+        });
+    
+        // Functions
+        async function fetchData() {
+            loading = true;
+            updateLoadingState();
+    
+            try {
+                const [logsResponse, statsResponse] = await Promise.all([
+                    fetch('/api/get-emission-logs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            startDate: startDateInput.value,
+                            endDate: endDateInput.value,
+                            limit: 10,
+                            offset: (currentPage - 1) * 10
+                        })
+                    }),
+                    fetch('/api/get-emission-stats', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            startDate: startDateInput.value,
+                            endDate: endDateInput.value
+                        })
+                    })
+                ]);
+    
+                if (!logsResponse.ok || !statsResponse.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+    
+                const logsResult = await logsResponse.json();
+                const statsResult = await statsResponse.json();
+    
+                if (logsResult.error) throw new Error(Logs API Error: ${logsResult.error});
+                if (statsResult.error) throw new Error(Stats API Error: ${statsResult.error});
+    
+                logsData = logsResult.logs || []; // Safely access logs, default to empty array if needed.
+    
+                updateLogsTable(logsData);
+    
+                updateStats(statsResult.stats || {});  //Safely use stats, defaults to empty obj if needed
+    
+                updatePagination();  // Call function for pagination.
+    
+            } catch (err) {
+                showError(err.message);
+    
+            } finally {
+                loading = false;
+                updateLoadingState();
+    
+            }
+        }
+    
+       function updateLogsTable(logs) {
+            logsTableBody.innerHTML = ''; // Clear existing table rows
+    
+            if (!logs || logs.length === 0) {  // Check if the logs is valid/available
+                logsTableBody.innerHTML = '<tr><td colspan="7">No logs found.</td></tr>';
+                return;
+            }
+    
+            //Display only 10 most recent logs.
+            const displayedLogs = logs.slice(0, 10);
+    
+            displayedLogs.forEach(log => {
+                const row = logsTableBody.insertRow();
+    
+                const dateCell = row.insertCell();
+                dateCell.textContent = new Date(log.date).toLocaleDateString();
+    
+                const sourceTypeCell = row.insertCell();
+                sourceTypeCell.textContent = log.source_type;
+    
+                const activityTypeCell = row.insertCell();
+                activityTypeCell.textContent = log.activity_type;
+    
+                const fuelTypeCell = row.insertCell();
+                fuelTypeCell.textContent = log.fuel_type;
+    
+                const quantityCell = row.insertCell();
+                quantityCell.textContent = log.quantity;
+    
+                const unitCell = row.insertCell();
+                unitCell.textContent = log.unit;
+    
+                const emissionsCell = row.insertCell();
+                emissionsCell.textContent = log.emissions ? log.emissions.toFixed(2) : 'N/A';  // show emissions
+    
+            });
+        }
+    
+        function updateStats(stats) {
+    
+            statsSection.innerHTML = ''; // Clear any previous content
+            // Example stats card creation: Customize based on actual properties returned by API
+            function createStatCard(title, value) {
+                const card = document.createElement('div');
+                card.classList.add('stat-card');
+    
+                const statTitle = document.createElement('div');
+                statTitle.classList.add('stat-title');
+                statTitle.textContent = title;
+    
+                const statValue = document.createElement('div');
+                statValue.classList.add('stat-value');
+                statValue.textContent = value;
+    
+                card.appendChild(statTitle);
+                card.appendChild(statValue);
+    
+                return card;
+            }
+    
+            if (stats && Object.keys(stats).length > 0) {
+                const totalEmissionsCard = createStatCard("Total Emissions", stats.totalEmissions ? stats.totalEmissions.toFixed(2) : "0.00");  // Customize property access based on API
+                const averageEmissionsCard = createStatCard("Average Emissions", stats.averageEmissions ? stats.averageEmissions.toFixed(2) : "0.00");
+                const logCountCard = createStatCard("Log Count", stats.logCount || 0);
+    
+                statsSection.appendChild(totalEmissionsCard);
+                statsSection.appendChild(averageEmissionsCard);
+                statsSection.appendChild(logCountCard);
+    
+            } else {
+                statsSection.innerHTML = "<p>No stats available for the selected period.</p>";
+            }
+    
+        }
+    
+        function updatePagination() {
+            currentPageSpan.textContent = Page ${currentPage};
+        }
+        function showError(message) {
+            errorToast.textContent = message;
+            errorToast.style.display = 'block';
+            setTimeout(() => {
+                errorToast.style.display = 'none';
+            }, 3000);
+        }
+        function updateLoadingState() {
+            loadingOverlay.style.display = loading ? 'flex' : 'none';
+        }
+    </script>
+</body>
+
+</html>
