@@ -21,16 +21,6 @@ Industries are one of the largest contributors to greenhouse gas emissions, but 
 
 ---
 
-## 🛠️ Tech Stack
-
-- **Frontend**: HTML, CSS, JavaScript (React optional)
-- **Backend**: Python / Node.js
-- **Data Storage**: JSON / Firebase / MongoDB
-- **Visualization**: Chart.js / D3.js / Google Charts
-- **Tools**: Git, GitHub, Canva, Figma
-
----
-
 ## 📁 Project Structure (Simplified)
 
 CarbonTally/
